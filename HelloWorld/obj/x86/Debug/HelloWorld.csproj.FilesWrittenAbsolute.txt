@@ -1,0 +1,5 @@
+/home/semiash/projects/HelloWorld/obj/x86/Debug/.NETFramework,Version=v4.5.AssemblyAttribute.cs
+/home/semiash/projects/HelloWorld/bin/Debug/HelloWorld.exe.mdb
+/home/semiash/projects/HelloWorld/bin/Debug/HelloWorld.exe
+/home/semiash/projects/HelloWorld/obj/x86/Debug/HelloWorld.exe
+/home/semiash/projects/HelloWorld/obj/x86/Debug/HelloWorld.exe.mdb
