@@ -7,7 +7,7 @@ namespace HelloWorld
 		static void Main (string[] args)
 		{
 
-			{
+			Action sugar = () => {
 				/*Собираюсь на пикник, хочу взять с собой термос чая. 
 			Термос 0,5 литра, сколько мне в него грамм сахара засыпать? 
 			В кружку я обычно три кубика кладу, но сейчас под рукой нет рафинада, 
@@ -28,15 +28,15 @@ namespace HelloWorld
 
 				//Ответ
 				double result = MSug;
-			}
+			};
 
-			{
+			Action HiWorld = () => {
 				Console.WriteLine ("Hello World!");
 				//Console.ReadKey ();
 				int result = 0;
-			}
+			};
 
-			{
+			Action QuadEq = () => {
 				//Дано: коэффициенты уравнения a*x^2+b*x+c=0
 				double a, b, c; 
 				a = 1;
@@ -58,7 +58,7 @@ namespace HelloWorld
 							NumberOfRealRoots = 1;
 						else
 							NumberOfRealRoots = 2;
-					} 
+				} 
 				} else {//Решение: определение формулы для линейного уравнения
 					if (b != 0) {
 						root1 = -c / b;//Вычисление
@@ -75,8 +75,19 @@ namespace HelloWorld
 					result2 = root2;
 				}
 				
-			}
-
+			};
+			int iAct = 1;
+			Action ComboAction = () => Console.WriteLine("Empty Action");
+			ComboAction = () => {
+				QuadEq ();
+				sugar ();
+				if (iAct == 1) {
+					iAct = 0;
+					ComboAction ();
+				} else
+					HiWorld ();
+			};
+			ComboAction ();
 		}
 	}
 }
