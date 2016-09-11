@@ -7,10 +7,11 @@ namespace HelloWorld
 		static void Main (string[] args)
 		{
 
-			{/*Собираюсь на пикник, хочу взять с собой термос чая. 
-			Cколько мне в него грамм сахара засыпать? 
-			В кружку я обычно три кубика кладу, но сейчас под рукой нет рафинада, 
-			а хочу, чтобы чай был такой же по сладости.*/
+			{
+				//Собираюсь на пикник, хочу взять с собой термос чая. 
+				//Cколько мне в него грамм сахара засыпать? 
+				//В кружку я обычно три кубика кладу, но сейчас под рукой нет рафинада, 
+				//а хочу, чтобы чай был такой же по сладости.
 				Func<double,double,bool> EnoughSugar = (ThermosVolume, SugarMass) => {
 					int PiecesOfSugarForCup = 3; //Количество кубиков рафинада на кружку
 					double CupVolume = 0.3; //Объем кружки (л)
@@ -19,13 +20,64 @@ namespace HelloWorld
 					double SugarMassRequired; //Требуемая масса сахара в термосе (г)
 					SugarMassRequired = ThermosVolume * PiecesOfSugarForCup * PieceOfSugarMass / CupVolume;
 
-					if (SugarMassRequired > SugarMass) return false;
-					else return true;
+					if (SugarMassRequired > SugarMass)
+						return false;
+					else
+						return true;
 				};
 
 				double UserThermosVolume = 1.5; //Объем термоса (л)
 				double UserSugarMass = 55; //Масса имеющегося сахара (г)
-				bool result = EnoughSugar(UserThermosVolume, UserSugarMass);
+				bool result = EnoughSugar (UserThermosVolume, UserSugarMass);
+			}
+
+			/*
+			{
+				Action sugar = () => {
+					//Дано 
+					double VTer = 0.5; //Объем термоса (л)
+					int NCup = 3; //Количество кубиков рафинада на кружку
+
+					double VCup = 0.3; //Объем кружки (л)
+					double MRaf = 5; //Масса кубика рафинада (г)
+
+					//Найти
+					double MSug; //Масса сахара в термосе (г)
+
+					//Решение
+					MSug = VTer * NCup * MRaf / VCup;
+
+					//Ответ
+					double result = MSug;
+				};
+			}*/
+
+			{
+				//В двухмерной системе координат есть прямоугольная мишень, 
+				//расположение и размеры которой заданы координатами противоположных углов.
+				//И есть координаты места попадания выстрела. 
+				//Нужно определить, пришлось ли попадание на мишень или нет.
+				Func<double, double, double, double, double, double, bool> ShotInTarget = 
+					(TargetX1,TargetY1,TargetX2,TargetY2,XShot,YShot) => {
+					double TargetXMin = TargetX1;
+					double TargetXMax = TargetX2;
+					double TargetYMin = TargetY1;
+					double TargetYMax = TargetY2;
+					if (TargetX1>TargetX2){
+						TargetXMax = TargetX1;
+						TargetXMin = TargetX2;
+					}
+					if (TargetY1>TargetY2){
+						TargetYMax = TargetY1;
+						TargetYMin = TargetY2;
+					}
+					if ((XShot > TargetXMin) && (XShot < TargetXMax) && 
+						(YShot > TargetYMin) && (YShot < TargetYMax)) 
+						return true;
+					else return false;
+				};
+
+				bool result = ShotInTarget (0, 2, -2, 4,- 1, 3);
 			}
 
 			/*Action HiWorld = () => {
