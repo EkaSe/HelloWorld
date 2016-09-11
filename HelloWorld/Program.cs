@@ -7,30 +7,28 @@ namespace HelloWorld
 		static void Main (string[] args)
 		{
 
-			Action sugar = () => {
-				/*Собираюсь на пикник, хочу взять с собой термос чая. 
-			Термос 0,5 литра, сколько мне в него грамм сахара засыпать? 
+			{/*Собираюсь на пикник, хочу взять с собой термос чая. 
+			Cколько мне в него грамм сахара засыпать? 
 			В кружку я обычно три кубика кладу, но сейчас под рукой нет рафинада, 
 			а хочу, чтобы чай был такой же по сладости.*/
+				Func<double,double,bool> EnoughSugar = (ThermosVolume, SugarMass) => {
+					int PiecesOfSugarForCup = 3; //Количество кубиков рафинада на кружку
+					double CupVolume = 0.3; //Объем кружки (л)
+					double PieceOfSugarMass = 5; //Масса кубика рафинада (г)
 
-				//Дано 
-				double VTer = 0.5; //Объем термоса (л)
-				int NCup = 3; //Количество кубиков рафинада на кружку
+					double SugarMassRequired; //Требуемая масса сахара в термосе (г)
+					SugarMassRequired = ThermosVolume * PiecesOfSugarForCup * PieceOfSugarMass / CupVolume;
 
-				double VCup = 0.3; //Объем кружки (л)
-				double MRaf = 5; //Масса кубика рафинада (г)
+					if (SugarMassRequired > SugarMass) return false;
+					else return true;
+				};
 
-				//Найти
-				double MSug; //Масса сахара в термосе (г)
+				double UserThermosVolume = 1.5; //Объем термоса (л)
+				double UserSugarMass = 55; //Масса имеющегося сахара (г)
+				bool result = EnoughSugar(UserThermosVolume, UserSugarMass);
+			}
 
-				//Решение
-				MSug = VTer * NCup * MRaf / VCup;
-
-				//Ответ
-				double result = MSug;
-			};
-
-			Action HiWorld = () => {
+			/*Action HiWorld = () => {
 				Console.WriteLine ("Hello World!");
 				//Console.ReadKey ();
 				int result = 0;
@@ -75,8 +73,8 @@ namespace HelloWorld
 					result2 = root2;
 				}
 				
-			};
-			int iAct = 1;
+			};*/
+			/*int iAct = 1;
 			Action ComboAction = () => Console.WriteLine("Empty Action");
 			ComboAction = () => {
 				QuadEq ();
@@ -84,10 +82,12 @@ namespace HelloWorld
 				if (iAct == 1) {
 					iAct = 0;
 					ComboAction ();
-				} else
+				} else {
 					HiWorld ();
+				}
 			};
 			ComboAction ();
+			ComboAction ();*/
 		}
 	}
 }
