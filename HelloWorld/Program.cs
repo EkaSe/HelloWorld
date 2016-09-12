@@ -4,8 +4,8 @@ namespace HelloWorld
 {
 	public class Point2D
 	{
-		public double Xpoint;
-		public double Ypoint;
+		public double X;
+		public double Y;
 	}
 
 	public class Rectangle
@@ -66,8 +66,8 @@ namespace HelloWorld
 
 				Func<Rectangle, Point2D, bool> shotInTarget = 
 					(target,shot) => {
-					if (between(shot.Xpoint, target.X1, target.X2) && 
-						between(shot.Ypoint, target.Y1, target.Y2) ) 
+					if (between(shot.X, target.X1, target.X2) && 
+						between(shot.Y, target.Y1, target.Y2) ) 
 						return true;
 					else return false;
 				};
@@ -78,8 +78,8 @@ namespace HelloWorld
 				userTarget.X2 = -2;
 				userTarget.Y2 = 4;
 				Point2D shotPoint = new Point2D ();
-				shotPoint.Xpoint = -1;
-				shotPoint.Ypoint = 3;
+				shotPoint.X = -1;
+				shotPoint.Y = 3;
 				bool result = shotInTarget (userTarget,shotPoint);
 			}
 
