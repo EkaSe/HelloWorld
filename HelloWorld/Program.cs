@@ -2,19 +2,21 @@ using System;
 
 namespace HelloWorld
 {
-	public class point2D
+	public class Point2D
 	{
 		public double Xpoint;
 		public double Ypoint;
 	}
 
-	public class rectangle
+	public class Rectangle
 	{
 		public double X1;
 		public double X2;
 		public double Y1;
 		public double Y2;
 	}
+
+
 
 	class MainClass
 	{
@@ -62,7 +64,7 @@ namespace HelloWorld
 					else return false;
 				};
 
-				Func<rectangle, point2D, bool> shotInTarget = 
+				Func<Rectangle, Point2D, bool> shotInTarget = 
 					(target,shot) => {
 					if (between(shot.Xpoint, target.X1, target.X2) && 
 						between(shot.Ypoint, target.Y1, target.Y2) ) 
@@ -70,12 +72,12 @@ namespace HelloWorld
 					else return false;
 				};
 
-				rectangle userTarget = new rectangle();
+				Rectangle userTarget = new Rectangle();
 				userTarget.X1 = 0;
 				userTarget.Y1 = 2;
 				userTarget.X2 = -2;
 				userTarget.Y2 = 4;
-				point2D shotPoint = new point2D ();
+				Point2D shotPoint = new Point2D ();
 				shotPoint.Xpoint = -1;
 				shotPoint.Ypoint = 3;
 				bool result = shotInTarget (userTarget,shotPoint);
