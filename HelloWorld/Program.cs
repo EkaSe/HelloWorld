@@ -12,15 +12,16 @@ namespace HelloWorld
 				//Cколько мне в него грамм сахара засыпать? 
 				//В кружку я обычно три кубика кладу, но сейчас под рукой нет рафинада, 
 				//а хочу, чтобы чай был такой же по сладости.
-				Func<double,double,bool> EnoughSugar = (ThermosVolume, SugarMass) => {
+				Func<double,double> SugarMassRequired = (ThermosVolume) => {
 					int PiecesOfSugarForCup = 3; //Количество кубиков рафинада на кружку
 					double CupVolume = 0.3; //Объем кружки (л)
 					double PieceOfSugarMass = 5; //Масса кубика рафинада (г)
 
-					double SugarMassRequired; //Требуемая масса сахара в термосе (г)
-					SugarMassRequired = ThermosVolume * PiecesOfSugarForCup * PieceOfSugarMass / CupVolume;
+					return ThermosVolume * PiecesOfSugarForCup * PieceOfSugarMass / CupVolume;
+				};
 
-					if (SugarMassRequired > SugarMass)
+				Func<double,double,bool> EnoughSugar = (ThermosVolume, SugarMass) => {
+					if (SugarMassRequired(ThermosVolume) > SugarMass)
 						return false;
 					else
 						return true;
@@ -30,27 +31,6 @@ namespace HelloWorld
 				double UserSugarMass = 55; //Масса имеющегося сахара (г)
 				bool result = EnoughSugar (UserThermosVolume, UserSugarMass);
 			}
-
-			/*
-			{
-				Action sugar = () => {
-					//Дано 
-					double VTer = 0.5; //Объем термоса (л)
-					int NCup = 3; //Количество кубиков рафинада на кружку
-
-					double VCup = 0.3; //Объем кружки (л)
-					double MRaf = 5; //Масса кубика рафинада (г)
-
-					//Найти
-					double MSug; //Масса сахара в термосе (г)
-
-					//Решение
-					MSug = VTer * NCup * MRaf / VCup;
-
-					//Ответ
-					double result = MSug;
-				};
-			}*/
 
 			{
 				//В двухмерной системе координат есть прямоугольная мишень, 
