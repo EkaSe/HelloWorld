@@ -2,12 +2,26 @@ using System;
 
 namespace HelloWorld
 {
+	public class point2D
+	{
+		public double Xpoint;
+		public double Ypoint;
+	}
+
+	public class rectangle
+	{
+		public double X1;
+		public double X2;
+		public double Y1;
+		public double Y2;
+	}
+
 	class MainClass
 	{
 		static void Main (string[] args)
 		{
+			/*{
 
-			{
 				//Собираюсь на пикник, хочу взять с собой термос чая. 
 				//Cколько мне в него грамм сахара засыпать? 
 				//В кружку я обычно три кубика кладу, но сейчас под рукой нет рафинада, 
@@ -30,34 +44,41 @@ namespace HelloWorld
 				double userThermosVolume = 1.5; //Объем термоса (л)
 				double userSugarMass = 55; //Масса имеющегося сахара (г)
 				bool result = enoughSugar (userThermosVolume, userSugarMass);
-			}
+			}*/
 
 			{
 				//В двухмерной системе координат есть прямоугольная мишень, 
 				//расположение и размеры которой заданы координатами противоположных углов.
 				//И есть координаты места попадания выстрела. 
 				//Нужно определить, пришлось ли попадание на мишень или нет.
-				Func<double, double, double, double, double, double, bool> shotInTarget = 
-					(targetX1,targetY1,targetX2,targetY2,XShot,YShot) => {
-					double targetXMin = targetX1;
-					double targetXMax = targetX2;
-					double targetYMin = targetY1;
-					double targetYMax = targetY2;
-					if (targetX1>targetX2){
-						targetXMax = targetX1;
-						targetXMin = targetX2;
+				Func<double,double,double,bool> between = (value, min, max) => {
+					if (min > max) {
+						double temp = min;
+						min = max;
+						max = temp;
 					}
-					if (targetY1>targetY2){
-						targetYMax = targetY1;
-						targetYMin = targetY2;
-					}
-					if ((XShot > targetXMin) && (XShot < targetXMax) && 
-						(YShot > targetYMin) && (YShot < targetYMax)) 
+					if ((value > min) && (value < max))
 						return true;
 					else return false;
 				};
 
-				bool result = shotInTarget (0, 2, -2, 4,- 1, 3);
+				Func<rectangle, point2D, bool> shotInTarget = 
+					(target,shot) => {
+					if (between(shot.Xpoint, target.X1, target.X2) && 
+						between(shot.Ypoint, target.Y1, target.Y2) ) 
+						return true;
+					else return false;
+				};
+
+				rectangle userTarget = new rectangle();
+				userTarget.X1 = 0;
+				userTarget.Y1 = 2;
+				userTarget.X2 = -2;
+				userTarget.Y2 = 4;
+				point2D shotPoint = new point2D ();
+				shotPoint.Xpoint = -1;
+				shotPoint.Ypoint = 3;
+				bool result = shotInTarget (userTarget,shotPoint);
 			}
 
 			/*Action HiWorld = () => {

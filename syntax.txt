@@ -53,6 +53,20 @@ while (i < 10)
 }
 ______________________________________________________
 
+//multiple in, single out
+Func<inType1,inType2...inTypeN,outType> FuncName = (Var1,...,varN) => {
+	return OutVarName; //результат, возвращаемый функцией, тип outType
+};
+outType Var = Func(Var1,Var2...);
+
+------------------------------------------------------
+
+//No in/out parameters
+Action HiWorld = () => {
+	Console.WriteLine ("Hello World!");
+};
+
+------------------------------------------------------
 
 class ClassName
 {
