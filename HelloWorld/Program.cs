@@ -12,24 +12,24 @@ namespace HelloWorld
 				//Cколько мне в него грамм сахара засыпать? 
 				//В кружку я обычно три кубика кладу, но сейчас под рукой нет рафинада, 
 				//а хочу, чтобы чай был такой же по сладости.
-				Func<double,double> SugarMassRequired = (ThermosVolume) => {
-					int PiecesOfSugarForCup = 3; //Количество кубиков рафинада на кружку
-					double CupVolume = 0.3; //Объем кружки (л)
-					double PieceOfSugarMass = 5; //Масса кубика рафинада (г)
+				Func<double,double> sugarMassRequired = (thermosVolume) => {
+					int piecesOfSugarForCup = 3; //Количество кубиков рафинада на кружку
+					double cupVolume = 0.3; //Объем кружки (л)
+					double pieceOfSugarMass = 5; //Масса кубика рафинада (г)
 
-					return ThermosVolume * PiecesOfSugarForCup * PieceOfSugarMass / CupVolume;
+					return thermosVolume * piecesOfSugarForCup * pieceOfSugarMass / cupVolume;
 				};
 
-				Func<double,double,bool> EnoughSugar = (ThermosVolume, SugarMass) => {
-					if (SugarMassRequired(ThermosVolume) > SugarMass)
+				Func<double,double,bool> enoughSugar = (thermosVolume, sugarMass) => {
+					if (sugarMassRequired(thermosVolume) > sugarMass)
 						return false;
 					else
 						return true;
 				};
 
-				double UserThermosVolume = 1.5; //Объем термоса (л)
-				double UserSugarMass = 55; //Масса имеющегося сахара (г)
-				bool result = EnoughSugar (UserThermosVolume, UserSugarMass);
+				double userThermosVolume = 1.5; //Объем термоса (л)
+				double userSugarMass = 55; //Масса имеющегося сахара (г)
+				bool result = enoughSugar (userThermosVolume, userSugarMass);
 			}
 
 			{
@@ -37,27 +37,27 @@ namespace HelloWorld
 				//расположение и размеры которой заданы координатами противоположных углов.
 				//И есть координаты места попадания выстрела. 
 				//Нужно определить, пришлось ли попадание на мишень или нет.
-				Func<double, double, double, double, double, double, bool> ShotInTarget = 
-					(TargetX1,TargetY1,TargetX2,TargetY2,XShot,YShot) => {
-					double TargetXMin = TargetX1;
-					double TargetXMax = TargetX2;
-					double TargetYMin = TargetY1;
-					double TargetYMax = TargetY2;
-					if (TargetX1>TargetX2){
-						TargetXMax = TargetX1;
-						TargetXMin = TargetX2;
+				Func<double, double, double, double, double, double, bool> shotInTarget = 
+					(targetX1,targetY1,targetX2,targetY2,XShot,YShot) => {
+					double targetXMin = targetX1;
+					double targetXMax = targetX2;
+					double targetYMin = targetY1;
+					double targetYMax = targetY2;
+					if (targetX1>targetX2){
+						targetXMax = targetX1;
+						targetXMin = targetX2;
 					}
-					if (TargetY1>TargetY2){
-						TargetYMax = TargetY1;
-						TargetYMin = TargetY2;
+					if (targetY1>targetY2){
+						targetYMax = targetY1;
+						targetYMin = targetY2;
 					}
-					if ((XShot > TargetXMin) && (XShot < TargetXMax) && 
-						(YShot > TargetYMin) && (YShot < TargetYMax)) 
+					if ((XShot > targetXMin) && (XShot < targetXMax) && 
+						(YShot > targetYMin) && (YShot < targetYMax)) 
 						return true;
 					else return false;
 				};
 
-				bool result = ShotInTarget (0, 2, -2, 4,- 1, 3);
+				bool result = shotInTarget (0, 2, -2, 4,- 1, 3);
 			}
 
 			/*Action HiWorld = () => {
