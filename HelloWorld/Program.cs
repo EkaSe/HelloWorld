@@ -10,12 +10,9 @@ namespace HelloWorld
 
 	public class Rectangle
 	{
-		public double X1;
-		public double X2;
-		public double Y1;
-		public double Y2;
+		public Point2D LeftBottom;
+		public Point2D RightTop;
 	}
-
 
 
 	class MainClass
@@ -54,32 +51,33 @@ namespace HelloWorld
 				//И есть координаты места попадания выстрела. 
 				//Нужно определить, пришлось ли попадание на мишень или нет.
 				Func<double,double,double,bool> between = (value, min, max) => {
-					if (min > max) {
-						double temp = min;
-						min = max;
-						max = temp;
-					}
-					if ((value > min) && (value < max))
-						return true;
-					else return false;
+					if (min > max)
+						throw new Exception("min не может быть больше max");
+					return ((value > min) && (value < max));
 				};
 
 				Func<Rectangle, Point2D, bool> shotInTarget = 
 					(target,shot) => {
-					if (between(shot.X, target.X1, target.X2) && 
-						between(shot.Y, target.Y1, target.Y2) ) 
-						return true;
-					else return false;
+					return (between(shot.X, target.LeftBottom.X, target.RightTop.X) && 
+						between(shot.Y, target.LeftBottom.Y, target.RightTop.Y));
 				};
 
-				Rectangle userTarget = new Rectangle();
-				userTarget.X1 = 0;
-				userTarget.Y1 = 2;
-				userTarget.X2 = -2;
-				userTarget.Y2 = 4;
 				Point2D shotPoint = new Point2D ();
 				shotPoint.X = -1;
 				shotPoint.Y = 3;
+				Point2D targetVertex1 = new Point2D ();
+				Point2D targetVertex2 = new Point2D ();
+				targetVertex1.X = 0;
+				targetVertex1.Y = 2;
+				targetVertex2.X = -2;
+				targetVertex2.Y = 4;
+				Rectangle userTarget = new Rectangle();
+				userTarget.LeftBottom = new Point2D ();
+				userTarget.RightTop = new Point2D ();
+				userTarget.LeftBottom.X = Math.Min(targetVertex1.X, targetVertex2.X);
+				userTarget.LeftBottom.Y = Math.Min(targetVertex1.Y, targetVertex2.Y);
+				userTarget.RightTop.X = Math.Max(targetVertex1.X, targetVertex2.X);
+				userTarget.RightTop.Y = Math.Max(targetVertex1.Y, targetVertex2.Y);
 				bool result = shotInTarget (userTarget,shotPoint);
 			}
 
