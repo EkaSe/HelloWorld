@@ -56,6 +56,17 @@ namespace HelloWorld
 					return ((value > min) && (value < max));
 				};
 
+				Func <Point2D, Point2D, Rectangle> constructRectangle = (vertex1, vertex2) => {
+					Rectangle target = new Rectangle ();
+					target.LeftBottom = new Point2D ();
+					target.RightTop = new Point2D ();
+					target.LeftBottom.X = Math.Min(vertex1.X, vertex2.X);
+					target.LeftBottom.Y = Math.Min(vertex1.Y, vertex2.Y);
+					target.RightTop.X = Math.Max(vertex1.X, vertex2.X);
+					target.RightTop.Y = Math.Max(vertex1.Y, vertex2.Y);
+					return target;
+				};
+
 				Func<Rectangle, Point2D, bool> shotInTarget = 
 					(target,shot) => {
 					return (between(shot.X, target.LeftBottom.X, target.RightTop.X) && 
@@ -71,13 +82,7 @@ namespace HelloWorld
 				targetVertex1.Y = 2;
 				targetVertex2.X = -2;
 				targetVertex2.Y = 4;
-				Rectangle userTarget = new Rectangle();
-				userTarget.LeftBottom = new Point2D ();
-				userTarget.RightTop = new Point2D ();
-				userTarget.LeftBottom.X = Math.Min(targetVertex1.X, targetVertex2.X);
-				userTarget.LeftBottom.Y = Math.Min(targetVertex1.Y, targetVertex2.Y);
-				userTarget.RightTop.X = Math.Max(targetVertex1.X, targetVertex2.X);
-				userTarget.RightTop.Y = Math.Max(targetVertex1.Y, targetVertex2.Y);
+				Rectangle userTarget = constructRectangle (targetVertex1, targetVertex2);
 				bool result = shotInTarget (userTarget,shotPoint);
 			}
 
