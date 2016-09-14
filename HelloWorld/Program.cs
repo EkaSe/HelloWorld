@@ -14,6 +14,12 @@ namespace HelloWorld
 		public Point2D RightTop;
 	}
 
+	public class Circle
+	{
+		public Point2D Center;
+		public double Radius;
+	}
+
 
 	class MainClass
 	{
@@ -49,11 +55,21 @@ namespace HelloWorld
 			return target;
 		};
 
-		static Func <Rectangle, Point2D, bool> shotInTarget = 
+		static Func <Rectangle, Point2D, bool> shotInRectangleTarget = 
 			(target,shot) => {
 			return (between(shot.X, target.LeftBottom.X, target.RightTop.X) && 
 				between(shot.Y, target.LeftBottom.Y, target.RightTop.Y));
 		};
+
+		static Func <Point2D, Point2D, double> distanceBetweenPoints = (point1, point2) => {
+			return Math.Sqrt (Math.Pow((point1.X - point2.X),2) + Math.Pow((point1.Y - point2.Y),2));
+		};
+
+		static Func <Circle, Point2D, bool> shotInRoundTarget = 
+			(target, shot) => {
+			return (distanceBetweenPoints(target.Center, shot) < target.Radius);
+		};
+
 
 		static Action HiWorld = () => {
 			Console.WriteLine ("Hello World!");
@@ -115,7 +131,7 @@ namespace HelloWorld
 				bool result = enoughSugar (userThermosVolume, userSugarMass);
 			}*/
 
-			{
+			/*{
 				//В двухмерной системе координат есть прямоугольная мишень, 
 				//расположение и размеры которой заданы координатами противоположных углов.
 				//И есть координаты места попадания выстрела. 
@@ -131,7 +147,22 @@ namespace HelloWorld
 				targetVertex2.X = -2;
 				targetVertex2.Y = 4;
 				Rectangle userTarget = constructRectangle (targetVertex1, targetVertex2);
-				bool result = shotInTarget (userTarget,shotPoint);
+				bool result = shotInRectangleTarget (userTarget,shotPoint);
+			}*/
+
+			{
+				//Круглая мишень
+				Point2D shotPoint = new Point2D ();
+				shotPoint.X = -1;
+				shotPoint.Y = 3;
+
+				Circle userTarget = new Circle ();
+				userTarget.Center = new Point2D ();
+				userTarget.Radius = 3;
+				userTarget.Center.X = 0;
+				userTarget.Center.Y = 2;
+
+				bool result = shotInRoundTarget (userTarget, shotPoint);
 			}
 
 			/*int iAct = 1;
