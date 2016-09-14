@@ -23,6 +23,7 @@ namespace HelloWorld
 
 	class MainClass
 	{
+//___________________________________________________________________________
 		static Func <double,double> sugarMassRequired = (thermosVolume) => {
 			int piecesOfSugarForCup = 3; //Количество кубиков рафинада на кружку
 			double cupVolume = 0.3; //Объем кружки (л)
@@ -38,10 +39,19 @@ namespace HelloWorld
 				return true;
 		};
 
+//___________________________________________________________________________ 
+
 		static Func <double,double,double,bool> between = (value, min, max) => {
 			if (min > max)
 				throw new Exception("min не может быть больше max");
-			return ((value > min) && (value < max));
+			return ((value >= min) && (value <= max));
+		};
+
+		static Func <double, double, Point2D> constructPoint = (XCoordinate, YCoordinate) => {
+			Point2D point = new Point2D ();
+			point.X = XCoordinate;
+			point.Y = YCoordinate;
+			return point;
 		};
 
 		static Func <Point2D, Point2D, Rectangle> constructRectangle = (vertex1, vertex2) => {
@@ -53,6 +63,12 @@ namespace HelloWorld
 			target.RightTop.X = Math.Max(vertex1.X, vertex2.X);
 			target.RightTop.Y = Math.Max(vertex1.Y, vertex2.Y);
 			return target;
+		};
+
+		static Func <Point2D, double, Circle> constructCircle = (center, radius) => {
+			Circle target = new Circle ();
+			target.Center = center;
+			target.Radius = radius;
 		};
 
 		static Func <Rectangle, Point2D, bool> shotInRectangleTarget = 
@@ -67,9 +83,10 @@ namespace HelloWorld
 
 		static Func <Circle, Point2D, bool> shotInRoundTarget = 
 			(target, shot) => {
-			return (distanceBetweenPoints(target.Center, shot) < target.Radius);
+			return (distanceBetweenPoints(target.Center, shot) <= target.Radius);
 		};
 
+//___________________________________________________________________________ 
 
 		static Action HiWorld = () => {
 			Console.WriteLine ("Hello World!");
@@ -115,8 +132,9 @@ namespace HelloWorld
 				result1 = root1;
 				result2 = root2;
 			}
-
+	
 		};
+//___________________________________________________________________________ 
 
 		static void Main (string[] args)
 		{
@@ -131,39 +149,38 @@ namespace HelloWorld
 				bool result = enoughSugar (userThermosVolume, userSugarMass);
 			}*/
 
-			/*{
+			{
 				//В двухмерной системе координат есть прямоугольная мишень, 
 				//расположение и размеры которой заданы координатами противоположных углов.
 				//И есть координаты места попадания выстрела. 
 				//Нужно определить, пришлось ли попадание на мишень или нет.
 
-				Point2D shotPoint = new Point2D ();
-				shotPoint.X = -1;
-				shotPoint.Y = 3;
-				Point2D targetVertex1 = new Point2D ();
-				Point2D targetVertex2 = new Point2D ();
-				targetVertex1.X = 0;
-				targetVertex1.Y = 2;
-				targetVertex2.X = -2;
-				targetVertex2.Y = 4;
-				Rectangle userTarget = constructRectangle (targetVertex1, targetVertex2);
-				bool result = shotInRectangleTarget (userTarget,shotPoint);
-			}*/
+				Point2D shotPoint = constructPoint (-1, 3);
+				Point2D targetVertex1 = constructPoint (-3, 3);
+				Point2D targetVertex2 = constructPoint (1, 5);
+				Rectangle rectangleTarget = constructRectangle (targetVertex1, targetVertex2);
+				bool resultRectangleTarget = shotInRectangleTarget (rectangleTarget,shotPoint);
 
-			{
 				//Круглая мишень
-				Point2D shotPoint = new Point2D ();
-				shotPoint.X = -1;
-				shotPoint.Y = 3;
 
-				Circle userTarget = new Circle ();
-				userTarget.Center = new Point2D ();
-				userTarget.Radius = 3;
-				userTarget.Center.X = 0;
-				userTarget.Center.Y = 2;
+				Circle roundTarget = constructCircle (constructPoint (0, 2), 3);
+				bool resultRoundTarget = shotInRoundTarget (roundTarget, shotPoint);
 
-				bool result = shotInRoundTarget (userTarget, shotPoint);
+				//T-мишень
+
+				Rectangle TTargetPart1 = rectangleTarget;
+				Rectangle TTargetPart2 = constructRectangle (constructPoint (0, 0),constructPoint (-2, 3));
+				bool resultTTarget = shotInRectangleTarget (TTargetPart1, shotPoint) ||
+				                     shotInRectangleTarget (TTargetPart2, shotPoint);
+				
+				//Мишень с отверстием
+
+				Circle targetHole = constructCircle (constructPoint (2, 1), 2);
+				bool resultTargetWithHole = shotInRoundTarget (roundTarget, shotPoint) &&
+				                            !shotInRoundTarget (targetHole, shotPoint);
+				
 			}
+
 
 			/*int iAct = 1;
 			Action ComboAction = () => Console.WriteLine("Empty Action");
