@@ -175,12 +175,42 @@ namespace HelloWorld
 			
 	}
 
+	public class LoopExamples 
+	{
+		static public int Multiplication (int multiplier1, int multiplier2 ) {
+			int result = 0;
+			if (multiplier2 > 0) {
+				for (int i = 1; i <= multiplier2; i++)
+					result = result + multiplier1;
+			} else {
+				for (int i = 1; i <= (-multiplier2); i++)
+					result = result - multiplier1;
+			};
+			return result;			
+		}
+		static public void TestMultiplication (int multiplier1, int multiplier2, int expectedResult){
+			if (Multiplication (multiplier1, multiplier2) == expectedResult)
+				Console.WriteLine ("Multiplication test: " + multiplier1 + " * " + multiplier2 + " = " +
+					expectedResult + " passed");
+			else Console.WriteLine ("Multiplication test: " + multiplier1 + " * " + multiplier2 + " = " +
+				expectedResult + " failed");
+		}
+		static public void TestLoops (){
+			TestMultiplication (3, 5, 15);
+			TestMultiplication (-3, -5, 15);
+			TestMultiplication (-3, 5, -15);
+			TestMultiplication (3, -5, -15);
+			TestMultiplication (0, 5, 0);
+			TestMultiplication (3, 0, 0);
+		}
+	}
+
 	class MainClass
 	{
 		static void Main (string[] args)
 		{
-			HitTest.TestHitTests ();
-			Miscellaneous.TestSugar ();
+			LoopExamples.TestLoops ();
+
 		}
 	}
 }
