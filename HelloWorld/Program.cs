@@ -191,6 +191,7 @@ namespace HelloWorld
 		}
 		static public int Factorial (int argument) {
 			int result = 1;
+			if (argument < 0) throw new Exception("Factorial of negative number is undefined");
 			for (int i = 1; i <= argument; i++)
 				result = result * i;
 			return result;
@@ -203,6 +204,7 @@ namespace HelloWorld
 			return result;
 		}
 
+
 		static public void TestMultiplication (int multiplier1, int multiplier2, int expectedResult){
 			if (Multiplication (multiplier1, multiplier2) == expectedResult)
 				Console.WriteLine ("Multiplication test: " + multiplier1 + " * " + multiplier2 + " = " +
@@ -211,10 +213,18 @@ namespace HelloWorld
 				expectedResult + " failed");
 		}
 		static public void TestFactorial (int argument, int expectedResult){
-			if (Factorial (argument) == expectedResult)
-				Console.WriteLine ("Factorial test: " + argument + "! = " + expectedResult + " passed");
-			else 
-				Console.WriteLine ("Factorial test: " + argument + "! = " + expectedResult + " failed");
+			if (argument < 0) {
+				try {
+					Factorial (argument);
+				} catch {
+					Console.WriteLine ("Factorial test: Invalid argument passed");
+				}
+			} else {
+				if (Factorial (argument) == expectedResult)
+					Console.WriteLine ("Factorial test: " + argument + "! = " + expectedResult + " passed");
+				else 
+					Console.WriteLine ("Factorial test: " + argument + "! = " + expectedResult + " failed");
+			}
 		}
 		static public void TestHyperharmonicSeries (int numberOfElements, double expectedResult){
 			if ((HyperharmonicSeries (numberOfElements) - expectedResult) < doubleEpsilon)
@@ -236,6 +246,7 @@ namespace HelloWorld
 			TestFactorial (0, 1);
 			TestFactorial (1, 1);
 			TestFactorial (5, 120);
+			TestFactorial (-5, 0);
 			Console.WriteLine ();
 			TestHyperharmonicSeries (1, 1);
 			TestHyperharmonicSeries (6, 1.4913889);
