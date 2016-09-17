@@ -203,7 +203,21 @@ namespace HelloWorld
 				result = result + 1 / (i * i);
 			return result;
 		}
-
+		static public double SinusTaylorSeries (double angle) { //angle in radians
+			double epsilon = 1E-7;
+			int n = 0;
+			double currentTerm = angle;
+			double nextTerm = angle;
+			double partialSum = currentTerm;
+			do {
+				currentTerm = nextTerm;
+				nextTerm = -currentTerm * angle * angle / (2 * n + 2) / (2 * n + 3);
+				partialSum += nextTerm;
+				n++;
+			} while (Math.Abs (currentTerm - nextTerm) > epsilon);
+			Console.WriteLine (n);
+			return partialSum;
+		}
 
 		static public void TestMultiplication (int multiplier1, int multiplier2, int expectedResult){
 			if (Multiplication (multiplier1, multiplier2) == expectedResult)
@@ -227,14 +241,19 @@ namespace HelloWorld
 			}
 		}
 		static public void TestHyperharmonicSeries (int numberOfElements, double expectedResult){
-			if ((HyperharmonicSeries (numberOfElements) - expectedResult) < doubleEpsilon)
+			if ((Math.Abs(HyperharmonicSeries (numberOfElements) - expectedResult)) < doubleEpsilon)
 				Console.WriteLine ("Hyperharmonic series test: partial sum of the first " + 
 					numberOfElements + " elements is " + expectedResult + " passed");
 			else 
 				Console.WriteLine ("Hypeharmonic series test: partial sum of the first " + 
 					numberOfElements + " elements is " + expectedResult + " failed");
 		}
-
+		static public void TestSinusTaylorSeries (double angle, double expectedResult){
+			if (Math.Abs (SinusTaylorSeries (angle) - expectedResult) < doubleEpsilon)
+				Console.WriteLine ("Taylor series test: sin(" + angle + ") = " + expectedResult + " passed");
+			else 
+				Console.WriteLine ("Taylor series test: sin(" + angle + ") = " + expectedResult + " failed");
+		} 
 		static public void TestLoops (){
 			TestMultiplication (3, 5, 15);
 			TestMultiplication (-3, -5, 15);
@@ -250,6 +269,11 @@ namespace HelloWorld
 			Console.WriteLine ();
 			TestHyperharmonicSeries (1, 1);
 			TestHyperharmonicSeries (6, 1.4913889);
+			Console.WriteLine ();
+			TestSinusTaylorSeries (0, 0);
+			TestSinusTaylorSeries (1.570796, 1);
+			TestSinusTaylorSeries (-0.52359877, -0.5);
+			TestSinusTaylorSeries (31.41592653, 0);
 		}
 	}
 
