@@ -177,6 +177,7 @@ namespace HelloWorld
 
 	public class LoopExamples 
 	{
+		static double doubleEpsilon = 1E-7;
 		static public int Multiplication (int multiplier1, int multiplier2 ) {
 			int result = 0;
 			if (multiplier2 > 0) {
@@ -188,6 +189,20 @@ namespace HelloWorld
 			};
 			return result;			
 		}
+		static public int Factorial (int argument) {
+			int result = 1;
+			for (int i = 1; i <= argument; i++)
+				result = result * i;
+			return result;
+		}
+		//partial sum of 1/n^2 series
+		static public double HyperharmonicSeries (int numberOfElements){
+			double result = 0;
+			for (int i = 1; i <= numberOfElements; i++)
+				result = result + 1 / (i * i);
+			return result;
+		}
+
 		static public void TestMultiplication (int multiplier1, int multiplier2, int expectedResult){
 			if (Multiplication (multiplier1, multiplier2) == expectedResult)
 				Console.WriteLine ("Multiplication test: " + multiplier1 + " * " + multiplier2 + " = " +
@@ -195,6 +210,21 @@ namespace HelloWorld
 			else Console.WriteLine ("Multiplication test: " + multiplier1 + " * " + multiplier2 + " = " +
 				expectedResult + " failed");
 		}
+		static public void TestFactorial (int argument, int expectedResult){
+			if (Factorial (argument) == expectedResult)
+				Console.WriteLine ("Factorial test: " + argument + "! = " + expectedResult + " passed");
+			else 
+				Console.WriteLine ("Factorial test: " + argument + "! = " + expectedResult + " failed");
+		}
+		static public void TestHyperharmonicSeries (int numberOfElements, double expectedResult){
+			if ((HyperharmonicSeries (numberOfElements) - expectedResult) < doubleEpsilon)
+				Console.WriteLine ("Hyperharmonic series test: partial sum of the first " + 
+					numberOfElements + " elements is " + expectedResult + " passed");
+			else 
+				Console.WriteLine ("Hypeharmonic series test: partial sum of the first " + 
+					numberOfElements + " elements is " + expectedResult + " failed");
+		}
+
 		static public void TestLoops (){
 			TestMultiplication (3, 5, 15);
 			TestMultiplication (-3, -5, 15);
@@ -202,6 +232,13 @@ namespace HelloWorld
 			TestMultiplication (3, -5, -15);
 			TestMultiplication (0, 5, 0);
 			TestMultiplication (3, 0, 0);
+			Console.WriteLine ();
+			TestFactorial (0, 1);
+			TestFactorial (1, 1);
+			TestFactorial (5, 120);
+			Console.WriteLine ();
+			TestHyperharmonicSeries (1, 1);
+			TestHyperharmonicSeries (6, 1.4913889);
 		}
 	}
 
