@@ -200,11 +200,12 @@ namespace HelloWorld
 		static public double HyperharmonicSeries (int numberOfElements){
 			double result = 0;
 			for (int i = 1; i <= numberOfElements; i++)
-				result = result + 1 / (i * i);
+				result += 1.0 / (i * i);
 			return result;
 		}
 		static public double SinusTaylorSeries (double angle) { //angle in radians
 			double epsilon = 1E-7;
+			angle = angle - 2 * Math.PI * Math.Truncate (angle / 2 / Math.PI);
 			int n = 0;
 			double currentTerm = angle;
 			double nextTerm = angle;
@@ -215,7 +216,6 @@ namespace HelloWorld
 				partialSum += nextTerm;
 				n++;
 			} while (Math.Abs (currentTerm - nextTerm) > epsilon);
-			Console.WriteLine (n);
 			return partialSum;
 		}
 
@@ -268,12 +268,12 @@ namespace HelloWorld
 			TestFactorial (-5, 0);
 			Console.WriteLine ();
 			TestHyperharmonicSeries (1, 1);
-			TestHyperharmonicSeries (6, 1.4913889);
+			TestHyperharmonicSeries (6, 1.49138888889);
 			Console.WriteLine ();
 			TestSinusTaylorSeries (0, 0);
-			TestSinusTaylorSeries (1.570796, 1);
-			TestSinusTaylorSeries (-0.52359877, -0.5);
-			TestSinusTaylorSeries (31.41592653, 0);
+			TestSinusTaylorSeries (Math.PI / 2, 1);
+			TestSinusTaylorSeries (-Math.PI / 6, -0.5);
+			TestSinusTaylorSeries (10 * Math.PI, 0);
 		}
 	}
 
