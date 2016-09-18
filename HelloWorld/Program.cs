@@ -225,6 +225,15 @@ namespace HelloWorld
 				asterisks.Append ("*");
 			return asterisks.ToString ();
 		}
+		static public string SlashLine (int numberOfSymbols){
+			StringBuilder slashes = new StringBuilder ();
+			for (int i = 0; i < numberOfSymbols; i++) {
+				if (i % 3 == 0)
+					slashes.Append ("/");
+				else slashes.Append ("\\");
+			};
+			return slashes.ToString ();
+		}
 
 		static public void TestMultiplication (int multiplier1, int multiplier2, int expectedResult){
 			if (Multiplication (multiplier1, multiplier2) == expectedResult)
@@ -241,7 +250,7 @@ namespace HelloWorld
 					Console.WriteLine ("Factorial test: Invalid argument passed");
 				}
 			} else {
-				if (Factorial (argument) == expectedResult)
+				if (expectedResult == Factorial (argument))
 					Console.WriteLine ("Factorial test: " + argument + "! = " + expectedResult + " passed");
 				else 
 					Console.WriteLine ("Factorial test: " + argument + "! = " + expectedResult + " failed");
@@ -267,6 +276,12 @@ namespace HelloWorld
 			} else 
 				Console.WriteLine ("Asterisks line test: " + numberOfAsterisks + " asterisks failed");;
 		}  
+		static public void TestSlashes (int numberOfSlashes, string expectedResult) {
+			if (SlashLine (numberOfSlashes) == expectedResult) {
+				Console.WriteLine ("Slash line test: " + numberOfSlashes + " slashes passed");
+			} else 
+				Console.WriteLine ("Slash line test: " + numberOfSlashes + " slashes failed");;
+		}  
 
 		static public void TestLoops (){
 			TestMultiplication (3, 5, 15);
@@ -291,6 +306,10 @@ namespace HelloWorld
 			Console.WriteLine ();
 			TestAsterisks (0, "");
 			TestAsterisks (10, "**********");
+			Console.WriteLine ();
+			TestSlashes (0, "");
+			TestSlashes (10, "/\\\\/\\\\/\\\\/");
+			Console.WriteLine (SlashLine (1000));
 		}
 	}
 
