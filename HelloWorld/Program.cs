@@ -235,6 +235,7 @@ namespace HelloWorld
 			return slashes.ToString ();
 		}
 
+
 		static public void TestMultiplication (int multiplier1, int multiplier2, int expectedResult){
 			if (Multiplication (multiplier1, multiplier2) == expectedResult)
 				Console.WriteLine ("Multiplication test: " + multiplier1 + " * " + multiplier2 + " = " +
@@ -282,6 +283,74 @@ namespace HelloWorld
 			} else 
 				Console.WriteLine ("Slash line test: " + numberOfSlashes + " slashes failed");;
 		}  
+		static public string DrawRoundTarget (Circle target){
+			StringBuilder outString = new StringBuilder();
+			for (int i = 25; i > 0; i--) {
+				for (int j = 0; j < 80; j++) {
+					if (HitTest.ShotInRoundTarget (target, Point2D.Construct (j, i)))
+						outString.Append ("X");
+					else
+						outString.Append (" ");
+				}
+				outString.Append ("\n");
+			}
+			return outString.ToString();
+		}
+		static public string DrawRectangleTarget (Rectangle target){
+			StringBuilder outString = new StringBuilder();
+			for (int i = 25; i > 0; i--) {
+				for (int j = 0; j < 80; j++) {
+					if (HitTest.ShotInRectangleTarget (target, Point2D.Construct (j, i)))
+						outString.Append ("X");
+					else
+						outString.Append (" ");
+				}
+				outString.Append ("\n");
+			}
+			return outString.ToString();
+		}
+		static public string DrawRectangleTargetWithRoundHole (Rectangle target, Circle hole){
+			StringBuilder outString = new StringBuilder();
+			for (int i = 25; i > 0; i--) {
+				for (int j = 0; j < 80; j++) {
+					if (HitTest.ShotInRectangleTarget (target, Point2D.Construct (j, i)) &&
+						!HitTest.ShotInRoundTarget (hole, Point2D.Construct (j, i)))
+						outString.Append ("X");
+					else
+						outString.Append (" ");
+				}
+				outString.Append ("\n");
+			}
+			return outString.ToString();
+		}
+		static public string DrawTTarget (Rectangle target1, Rectangle target2){
+			StringBuilder outString = new StringBuilder();
+			for (int i = 25; i > 0; i--) {
+				for (int j = 0; j < 80; j++) {
+					if (HitTest.ShotInRectangleTarget (target1, Point2D.Construct (j, i)) ||
+						HitTest.ShotInRectangleTarget (target2, Point2D.Construct (j, i)))
+						outString.Append ("X");
+					else
+						outString.Append (" ");
+				}
+				outString.Append ("\n");
+			}
+			return outString.ToString();
+		}
+		static public void TestDrawTargets (){
+			Rectangle rectangleTarget = Rectangle.Construct (Point2D.Construct (20, 5), Point2D.Construct (45, 20));
+			Console.WriteLine (DrawRectangleTarget (rectangleTarget));
+
+			Circle roundTarget = Circle.Construct (Point2D.Construct (40, 10), 10);
+			Console.WriteLine (DrawRoundTarget (roundTarget));
+
+			Rectangle TTargetPart1 = Rectangle.Construct (Point2D.Construct (50, 0), Point2D.Construct (60, 20));
+			Rectangle TTargetPart2 = Rectangle.Construct (Point2D.Construct (30, 15), Point2D.Construct (70, 22));
+			Console.WriteLine (DrawTTarget (TTargetPart1, TTargetPart2));
+
+			Circle targetHole = Circle.Construct (Point2D.Construct (40, 10), 10);
+			Console.WriteLine (DrawRectangleTargetWithRoundHole (rectangleTarget, targetHole));
+		}
 
 		static public void TestLoops (){
 			TestMultiplication (3, 5, 15);
@@ -309,7 +378,8 @@ namespace HelloWorld
 			Console.WriteLine ();
 			TestSlashes (0, "");
 			TestSlashes (10, "/\\\\/\\\\/\\\\/");
-			Console.WriteLine (SlashLine (1000));
+			//Console.WriteLine (SlashLine (81));
+			TestDrawTargets ();
 		}
 	}
 
