@@ -1,4 +1,5 @@
 using System;
+using System.Text;
 
 namespace HelloWorld
 {
@@ -218,6 +219,12 @@ namespace HelloWorld
 			} while (Math.Abs (currentTerm - nextTerm) > epsilon);
 			return partialSum;
 		}
+		static public string AsteriskLine (int numberOfSymbols){
+			StringBuilder asterisks = new StringBuilder ();
+			for (int i = 0; i < numberOfSymbols; i++)
+				asterisks.Append ("*");
+			return asterisks.ToString ();
+		}
 
 		static public void TestMultiplication (int multiplier1, int multiplier2, int expectedResult){
 			if (Multiplication (multiplier1, multiplier2) == expectedResult)
@@ -254,6 +261,13 @@ namespace HelloWorld
 			else 
 				Console.WriteLine ("Taylor series test: sin(" + angle + ") = " + expectedResult + " failed");
 		} 
+		static public void TestAsterisks (int numberOfAsterisks, string expectedResult) {
+			if (AsteriskLine (numberOfAsterisks) == expectedResult) {
+				Console.WriteLine ("Asterisks line test: " + numberOfAsterisks + " asterisks passed");
+			} else 
+				Console.WriteLine ("Asterisks line test: " + numberOfAsterisks + " asterisks failed");;
+		}  
+
 		static public void TestLoops (){
 			TestMultiplication (3, 5, 15);
 			TestMultiplication (-3, -5, 15);
@@ -274,6 +288,9 @@ namespace HelloWorld
 			TestSinusTaylorSeries (Math.PI / 2, 1);
 			TestSinusTaylorSeries (-Math.PI / 6, -0.5);
 			TestSinusTaylorSeries (10 * Math.PI, 0);
+			Console.WriteLine ();
+			TestAsterisks (0, "");
+			TestAsterisks (10, "**********");
 		}
 	}
 
