@@ -3,7 +3,7 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">x86</Platform>
-    <ProductVersion>10.0.0</ProductVersion>
+    <ProductVersion>8.0.30703</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{22E0B727-4830-4045-A4FD-5715493B6038}</ProjectGuid>
     <OutputType>Exe</OutputType>
@@ -36,6 +36,25 @@
   <ItemGroup>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="LoopExamples\LoopExamples.cs" />
+    <Compile Include="LoopExamples\LoopExamplesTest.cs" />
+    <Compile Include="Geometry\Point2D.cs" />
+    <Compile Include="Geometry\Rectangle.cs" />
+    <Compile Include="Geometry\Circle.cs" />
+    <Compile Include="Miscellaneous\HelloWorld.cs" />
+    <Compile Include="Miscellaneous\Sugar.cs" />
+    <Compile Include="Miscellaneous\SugarTest.cs" />
+    <Compile Include="Algebra\QuadraticEquation.cs" />
+    <Compile Include="Algebra\QuadraticEquationTest.cs" />
+    <Compile Include="HitTest\HitTarget.cs" />
+    <Compile Include="HitTest\HitTargetTest.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <ItemGroup>
+    <Folder Include="LoopExamples\" />
+    <Folder Include="Geometry\" />
+    <Folder Include="Miscellaneous\" />
+    <Folder Include="Algebra\" />
+    <Folder Include="HitTest\" />
+  </ItemGroup>
 </Project>
