@@ -151,7 +151,7 @@ namespace HelloWorld.LoopExamples
 			Console.WriteLine ();
 			TestSlashes (0, "");
 			TestSlashes (10, "/\\\\/\\\\/\\\\/");
-			//Console.WriteLine (SlashLine (81));
+			Console.WriteLine (LoopExamples.Labyrinth (800));
 			TestDrawTargets ();
 		}
 	}

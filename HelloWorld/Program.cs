@@ -12,7 +12,7 @@ namespace HelloWorld
 		static void Main (string[] args)
 		{
 			LoopExamplesTest.TestLoops ();
-
+			QuadraticEquationTest.RunTests ();
 		}
 	}
 }

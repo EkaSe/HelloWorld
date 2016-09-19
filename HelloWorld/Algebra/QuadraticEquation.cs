@@ -4,12 +4,12 @@ namespace HelloWorld.Algebra
 {
 	public class QuadraticEquation 
 	{
-		static public short Solve (double a, double b, double c) {
+		static public short Solve (double a, double b, double c, out double root1, out double root2) {
 			//Дано: коэффициенты уравнения a*x^2+b*x+c=0
 			//Найти: вещественные корни уравнения с заданными коэффициентами
 			short NumberOfRealRoots = 0;
-			double root1 = 0;
-			double root2 = 0;
+			root1 = 0;
+			root2 = 0;
 			//Решение: Определяем, какая формула будет использоваться, 
 			//в зависимости от типа уравнения
 			if (a != 0) { //Решение: определение формулы для квадратного уравнения

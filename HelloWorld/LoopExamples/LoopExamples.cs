@@ -60,6 +60,16 @@ namespace HelloWorld.LoopExamples
 			};
 			return slashes.ToString ();
 		}
+		static public string Labyrinth (int numberOfSymbols){
+			Random slashtype = new Random ();
+			StringBuilder slashes = new StringBuilder ();
+			for (int i = 0; i < numberOfSymbols; i++) {
+				if (slashtype.Next (2) == 0)
+					slashes.Append ("/");
+				else slashes.Append ("\\");
+			};
+			return slashes.ToString ();
+		}
 	}
 }
 
