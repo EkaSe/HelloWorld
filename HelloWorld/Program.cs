@@ -4,6 +4,7 @@ using HelloWorld.LoopExamples;
 using HelloWorld.Geometry;
 using HelloWorld.Algebra;
 using HelloWorld.HitTest;
+using HelloWorld.MemoryModel;
 
 namespace HelloWorld
 {
@@ -11,8 +12,9 @@ namespace HelloWorld
 	{
 		static void Main (string[] args)
 		{
-			LoopExamplesTest.TestLoops ();
-			QuadraticEquationTest.RunTests ();
+			//LoopExamplesTest.TestLoops ();
+			//QuadraticEquationTest.RunTests ();
+			MemoryModel.MemoryModel.RunProgram_SugarReqiure ();
 		}
 	}
 }

@@ -48,6 +48,7 @@
     <Compile Include="Algebra\QuadraticEquationTest.cs" />
     <Compile Include="HitTest\HitTarget.cs" />
     <Compile Include="HitTest\HitTargetTest.cs" />
+    <Compile Include="Miscellaneous\MemoryModel.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
