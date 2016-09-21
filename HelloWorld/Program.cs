@@ -14,7 +14,7 @@ namespace HelloWorld
 		{
 			//LoopExamplesTest.TestLoops ();
 			//QuadraticEquationTest.RunTests ();
-			MemoryModel.RunProgram_SugarReqiure ();
+			MemoryModel.RunProgram_SugarReqiure (); //выполнение?
 		}
 	}
 }
