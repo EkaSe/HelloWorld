@@ -26,15 +26,17 @@ namespace HelloWorld.Miscellaneous
 		static public void RunProgram_SugarReqiure () {
 			//Написание программы
 			/*
-			 static public double SugarMassRequired (double thermosVolume) {
-				int piecesOfSugarForCup = 3; //Количество кубиков рафинада на кружку
-				double cupVolume = 0.3; //Объем кружки (л)
-				double pieceOfSugarMass = 5; //Масса кубика рафинада (г)
-				return (thermosVolume * piecesOfSugarForCup * pieceOfSugarMass / cupVolume);
-			}
-
-			static public bool EnoughSugar (double thermosVolume, double sugarMass) {
-				return (SugarMassRequired(thermosVolume) <= sugarMass);
+			 static public void EnoughSugar () {
+				double ThermosVolume = 1.5; 
+				double cupVolume = 0.3;
+				double pieceOfSugarMass = 5;
+				int piecesOfSugarForCup = 3;
+				double sugarMass = 55;
+				double sugarMassRequired;
+				sugarMassRequired = thermosVolume * piecesOfSugarForCup * pieceOfSugarMass / cupVolume;
+				if (sugarMassRequired <= sugarMass)
+					result = 1;
+				else result = 0;
 			}*/
 
 			//Компиляция
@@ -48,19 +50,23 @@ namespace HelloWorld.Miscellaneous
 			ushort isEnoughSugarOffset = currentOffset++;
 			ushort sugarMassforCupOffset = currentOffset++;
 			ushort cupsInThermosOffset = currentOffset++;
-
+			ushort resultOffset = currentOffset++;
+			//Загрузка
 			byte[] memory = new byte[currentOffset];
-
-			//Запуск
-			AssignUInt8 (memory, thermosVolumeOffset, 70); //thermosVolume = 1.5l; max = 5l
-			AssignUInt8 (memory, cupVolumeOffset, 15); //cupVolume = 0.3l; max = 5l
-			AssignUInt8 (memory, pieceOfSugarMassOffset, 1); //pieceOfSugarMass = 4g; max = 1000g
-			AssignUInt8 (memory, pieceOfSugarForCupOffset, 3); //piecesOfSugarForCup = 3; max = 255
-			AssignUInt8 (memory, sugarMassAvailableOffset, 14); //sugarMassAvailable = 55g; max = 1000g
+			//Выполнение
+			AssignUInt8 (memory, thermosVolumeOffset, 15); //thermosVolume = 1.5l
+			AssignUInt8 (memory, cupVolumeOffset, 3); //cupVolume = 0.3
+			AssignUInt8 (memory, pieceOfSugarMassOffset, 5); //pieceOfSugarMass = 5g
+			AssignUInt8 (memory, pieceOfSugarForCupOffset, 3); //piecesOfSugarForCup = 3
+			AssignUInt8 (memory, sugarMassAvailableOffset, 55); //sugarMassAvailable = 55g
 			MultiplyUInt8 (memory, pieceOfSugarForCupOffset, pieceOfSugarMassOffset, sugarMassforCupOffset);
 			DivideUInt8 (memory, thermosVolumeOffset, cupVolumeOffset, cupsInThermosOffset);
 			MultiplyUInt8 (memory, sugarMassforCupOffset, cupsInThermosOffset, sugarMassRequiredOffset);
 			LessEqualUInt8 (memory, sugarMassRequiredOffset, sugarMassAvailableOffset, isEnoughSugarOffset);
+			if (memory [isEnoughSugarOffset] == 1)
+				AssignUInt8 (memory, resultOffset, 1);
+			else
+				AssignUInt8 (memory, resultOffset, 0);
 		}
 	}
 }
