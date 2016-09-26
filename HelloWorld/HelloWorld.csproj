@@ -49,6 +49,7 @@
     <Compile Include="HitTest\HitTarget.cs" />
     <Compile Include="HitTest\HitTargetTest.cs" />
     <Compile Include="Miscellaneous\MemoryModel.cs" />
+    <Compile Include="Miscellaneous\MemoryModel2.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

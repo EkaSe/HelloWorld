@@ -125,8 +125,7 @@ namespace HelloWorld.Miscellaneous
 			ushort sugarMassforCupOffset = currentOffset++;
 			ushort cupsInThermosOffset = currentOffset++;
 			ushort resultOffset = currentOffset++;
-			//Загрузка
-			byte[] memory = new byte[currentOffset];
+
 			ushort currentInstructionOffset = 0;
 			ushort instructionsLength = 255;
 			byte[] instructions = new byte[instructionsLength];
@@ -200,21 +199,12 @@ namespace HelloWorld.Miscellaneous
 			instructions [currentInstructionOffset++] = 1;
 			instructionsLength = currentInstructionOffset;
 
+			//Загрузка
+			byte[] memory = new byte[currentOffset];
 			//Выполнение
 			currentInstructionOffset = 0;
 			while (currentInstructionOffset < instructionsLength)
 				currentInstructionOffset = ProcessInstruction (instructions, memory, currentInstructionOffset);
-			/*
-			AssignUInt8 (memory, thermosVolumeOffset, 15); //thermosVolume = 1.5l
-			AssignUInt8 (memory, cupVolumeOffset, 3); //cupVolume = 0.3
-			AssignUInt8 (memory, pieceOfSugarMassOffset, 5); //pieceOfSugarMass = 5g
-			AssignUInt8 (memory, pieceOfSugarForCupOffset, 3); //piecesOfSugarForCup = 3
-			AssignUInt8 (memory, sugarMassAvailableOffset, 55); //sugarMassAvailable = 55g
-			MultiplyUInt8 (memory, pieceOfSugarForCupOffset, pieceOfSugarMassOffset, sugarMassforCupOffset);
-			DivideUInt8 (memory, thermosVolumeOffset, cupVolumeOffset, cupsInThermosOffset);
-			MultiplyUInt8 (memory, sugarMassforCupOffset, cupsInThermosOffset, sugarMassRequiredOffset);
-			LessEqualUInt8 (memory, sugarMassRequiredOffset, sugarMassAvailableOffset, isEnoughSugarOffset);
-			*/
 		}
 	}
 }
