@@ -4,8 +4,16 @@ namespace HelloWorld.Miscellaneous
 {
 	public class MemoryModel2
 	{
-		enum InstructionCode: ushort {EndOfInstructions, AssignUInt8, Assign, MultiplyUInt8, DivideUInt8, LessEqualUInt8, 
-			SkipIfZero, Jump};
+		enum InstructionCode: ushort {
+			EndOfInstructions, 
+			AssignUInt8Const, 
+			AssignUInt8Var, 
+			MultiplyUInt8, 
+			DivideUInt8, 
+			LessEqualUInt8, 
+			SkipIfZero, 
+			Jump
+		};
 
 		static public ushort WriteBytesToArray (byte[] array, ushort value, ushort startOffset) {
 			array [startOffset++] = BitConverter.GetBytes (value) [0];
@@ -13,11 +21,11 @@ namespace HelloWorld.Miscellaneous
 			return startOffset;
 		}
 
-		static public void AssignUInt8 (byte[] memory, ushort offset, byte value) {
+		static public void AssignUInt8Const (byte[] memory, ushort offset, byte value) {
 			memory [offset] = value;
 		}
 
-		static public void Assign (byte[] memory, ushort destinationOffset, ushort sourceOffset) {
+		static public void AssignUInt8Var (byte[] memory, ushort destinationOffset, ushort sourceOffset) {
 			memory [destinationOffset] = memory [sourceOffset];
 		}
 
@@ -49,7 +57,7 @@ namespace HelloWorld.Miscellaneous
 
 		static public void EndOfInstructions () {}
 
-		static public ushort GetInstructionsSugar (byte[] instructions) {
+		static public void WriteInstructionsSugar (byte[] instructions, out ushort memorySize) {
 			ushort currentOffset = 0;
 			ushort thermosVolumeOffset = currentOffset++;
 			ushort cupVolumeOffset = currentOffset++;
@@ -63,23 +71,23 @@ namespace HelloWorld.Miscellaneous
 			ushort resultOffset = currentOffset++;
 
 			ushort currentInstructionOffset = 0;
-			currentInstructionOffset = WriteBytesToArray (instructions, (ushort) InstructionCode.AssignUInt8, currentInstructionOffset);
+			currentInstructionOffset = WriteBytesToArray (instructions, (ushort) InstructionCode.AssignUInt8Const, currentInstructionOffset);
 			currentInstructionOffset = WriteBytesToArray (instructions, thermosVolumeOffset, currentInstructionOffset);
 			instructions [currentInstructionOffset++] = 15;
 			currentInstructionOffset += 3;
-			currentInstructionOffset = WriteBytesToArray (instructions, (ushort) InstructionCode.AssignUInt8, currentInstructionOffset);
+			currentInstructionOffset = WriteBytesToArray (instructions, (ushort) InstructionCode.AssignUInt8Const, currentInstructionOffset);
 			currentInstructionOffset = WriteBytesToArray (instructions, cupVolumeOffset, currentInstructionOffset);
 			instructions [currentInstructionOffset++] = 3;
 			currentInstructionOffset += 3;
-			currentInstructionOffset = WriteBytesToArray (instructions, (ushort) InstructionCode.AssignUInt8, currentInstructionOffset);
+			currentInstructionOffset = WriteBytesToArray (instructions, (ushort) InstructionCode.AssignUInt8Const, currentInstructionOffset);
 			currentInstructionOffset = WriteBytesToArray (instructions, pieceOfSugarMassOffset, currentInstructionOffset);
 			instructions [currentInstructionOffset++] = 5;
 			currentInstructionOffset += 3;
-			currentInstructionOffset = WriteBytesToArray (instructions, (ushort) InstructionCode.AssignUInt8, currentInstructionOffset);
+			currentInstructionOffset = WriteBytesToArray (instructions, (ushort) InstructionCode.AssignUInt8Const, currentInstructionOffset);
 			currentInstructionOffset = WriteBytesToArray (instructions, pieceOfSugarForCupOffset, currentInstructionOffset);
 			instructions [currentInstructionOffset++] = 3;
 			currentInstructionOffset += 3;
-			currentInstructionOffset = WriteBytesToArray (instructions, (ushort) InstructionCode.AssignUInt8, currentInstructionOffset);
+			currentInstructionOffset = WriteBytesToArray (instructions, (ushort) InstructionCode.AssignUInt8Const, currentInstructionOffset);
 			currentInstructionOffset = WriteBytesToArray (instructions, sugarMassAvailableOffset, currentInstructionOffset);
 			instructions [currentInstructionOffset++] = 55;
 			currentInstructionOffset += 3;
@@ -105,7 +113,7 @@ namespace HelloWorld.Miscellaneous
 			ushort ifNotZeroOffset = currentInstructionOffset;
 			currentInstructionOffset = WriteBytesToArray (instructions, (ushort) InstructionCode.Jump, currentInstructionOffset);
 			currentInstructionOffset += 6;
-			currentInstructionOffset = WriteBytesToArray (instructions, (ushort) InstructionCode.AssignUInt8, currentInstructionOffset);
+			currentInstructionOffset = WriteBytesToArray (instructions, (ushort) InstructionCode.AssignUInt8Const, currentInstructionOffset);
 			currentInstructionOffset = WriteBytesToArray (instructions, resultOffset, currentInstructionOffset);
 			instructions [currentInstructionOffset++] = 0;
 			currentInstructionOffset += 3;
@@ -113,30 +121,34 @@ namespace HelloWorld.Miscellaneous
 			currentInstructionOffset = WriteBytesToArray (instructions, (ushort) InstructionCode.Jump, currentInstructionOffset);
 			currentInstructionOffset += 6;
 			ifNotZeroOffset = WriteBytesToArray (instructions, (ushort) currentInstructionOffset, (ushort) (ifNotZeroOffset + 2));
-			currentInstructionOffset = WriteBytesToArray (instructions, (ushort) InstructionCode.AssignUInt8, currentInstructionOffset);
+			currentInstructionOffset = WriteBytesToArray (instructions, (ushort) InstructionCode.AssignUInt8Const, currentInstructionOffset);
 			currentInstructionOffset = WriteBytesToArray (instructions, resultOffset, currentInstructionOffset);
 			instructions [currentInstructionOffset++] = 1;
 			currentInstructionOffset += 3;
 			ifZeroOffset = WriteBytesToArray (instructions, (ushort) currentInstructionOffset, (ushort) (ifZeroOffset + 2));
 			currentInstructionOffset = WriteBytesToArray (instructions, (ushort) InstructionCode.EndOfInstructions, currentInstructionOffset);
 
-			return currentOffset; // memory size
+			memorySize = currentOffset;
 		}
 
-		static public ushort GetInstructionsOrderNumbers (byte[] instructions) {
+		static public void WriteInstructionsOrderNumbers (byte[] instructions, out ushort memorySize) {
 			byte[] composeInstructions = new byte[] {
-				1, 0, 0, 0, 52, 0, 0, 0, // value1 = 52
-				1, 0, 1, 0, 14, 0, 0, 0, // value2 = 14
-				5, 0, 0, 0, 1, 0, 4, 0, // ordered = (val1 <= val2)
-				6, 0, 4, 0, 0, 0, 0, 0, // skipIfZero (ordered)
-				7, 0, 56, 0, 0, 0, 0, 0, // jump (56)
-				2, 0, 2, 0, 1, 0, 0, 0, // min = value2
-				2, 0, 3, 0, 0, 0, 0, 0, // max = value1
-				0, 0 // End
+				/* 0*/ 1, 0, 0, 0, 15, 0, 0, 0, // value1 = 15
+				/* 8*/ 1, 0, 1, 0, 70, 0, 0, 0, // value2 = 70
+				/*16*/ 5, 0, 0, 0, 1, 0, 4, 0, // ordered = (val1 <= val2)
+				/*24*/ 6, 0, 4, 0, 0, 0, 0, 0, // skipIfZero (ordered)
+				/*32*/ 7, 0, 64, 0, 0, 0, 0, 0, // jump (64)
+				/*40*/ 2, 0, 2, 0, 1, 0, 0, 0, // min = value2
+				/*48*/ 2, 0, 3, 0, 0, 0, 0, 0, // max = value1
+				/*56*/ 7, 0, 80, 0, 0, 0, 0, 0, // jump (80)
+				/*64*/ 2, 0, 2, 0, 0, 0, 0, 0, // min = value1
+				/*72*/ 2, 0, 3, 0, 1, 0, 0, 0, // max = value2
+				/*80*/ 0, 0 // End
 			};
-			for (int i = 0; i < 56; i++)
+			for (int i = 0; i < 82; i++) {
 				instructions [i] = composeInstructions [i];
-			return 5; // memory size
+			};
+			memorySize = 5;
 		}
 
 		static public ushort ProcessInstruction (byte[] instructions, byte[] memory, ushort currentInstructionOffset){
@@ -144,18 +156,18 @@ namespace HelloWorld.Miscellaneous
 			ushort currentInstruction = BitConverter.ToUInt16 (instructions, currentInstructionOffset);
 			currentInstructionOffset += 2;
 			switch (currentInstruction) {
-			case (ushort) InstructionCode.AssignUInt8:
+			case (ushort) InstructionCode.AssignUInt8Const:
 				arg1 = BitConverter.ToUInt16 (instructions, currentInstructionOffset);
 				currentInstructionOffset += 2;
-				AssignUInt8 (memory, arg1, instructions [currentInstructionOffset++]);
+				AssignUInt8Const (memory, arg1, instructions [currentInstructionOffset++]);
 				currentInstructionOffset += 3;
 				break;
-			case (ushort) InstructionCode.Assign:
+			case (ushort) InstructionCode.AssignUInt8Var:
 				arg1 = BitConverter.ToUInt16 (instructions, currentInstructionOffset);
 				currentInstructionOffset += 2;
 				arg2 = BitConverter.ToUInt16 (instructions, currentInstructionOffset);
 				currentInstructionOffset += 2;
-				Assign(memory, arg1, arg2);
+				AssignUInt8Var(memory, arg1, arg2);
 				currentInstructionOffset += 2;
 				break;
 			case (ushort) InstructionCode.MultiplyUInt8:
@@ -223,16 +235,17 @@ namespace HelloWorld.Miscellaneous
 			ushort currentInstructionOffset = 0;
 			ushort instructionsLength = 255;
 			byte[] instructions = new byte[instructionsLength];
-			//ushort memorySize = GetInstructionsSugar (instructions);
-			ushort memorySize = GetInstructionsOrderNumbers (instructions);
+			ushort memorySize = 0;
+			//WriteInstructionsSugar(instructions, out memorySize);
+			WriteInstructionsOrderNumbers (instructions, out memorySize);
 
 			//Загрузка
 			byte[] memory = new byte[memorySize];
 			//Выполнение
 			currentInstructionOffset = 0;
-			do
+			do {
 				currentInstructionOffset = ProcessInstruction (instructions, memory, currentInstructionOffset);
-			while (currentInstructionOffset > 0);
+			} while (currentInstructionOffset > 0);
 		}
 	}
 }
