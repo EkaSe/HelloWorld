@@ -4,7 +4,8 @@ namespace HelloWorld.Miscellaneous
 {
 	public class MemoryModel2
 	{
-		enum InstructionCode: ushort {EndOfInstructions, AssignUInt8, MultiplyUInt8, DivideUInt8, LessEqualUInt8, SkipIfZero, Jump};
+		enum InstructionCode: ushort {EndOfInstructions, AssignUInt8, Assign, MultiplyUInt8, DivideUInt8, LessEqualUInt8, 
+			SkipIfZero, Jump};
 
 		static public ushort WriteBytesToArray (byte[] array, ushort value, ushort startOffset) {
 			array [startOffset++] = BitConverter.GetBytes (value) [0];
@@ -14,6 +15,10 @@ namespace HelloWorld.Miscellaneous
 
 		static public void AssignUInt8 (byte[] memory, ushort offset, byte value) {
 			memory [offset] = value;
+		}
+
+		static public void Assign (byte[] memory, ushort destinationOffset, ushort sourceOffset) {
+			memory [destinationOffset] = memory [sourceOffset];
 		}
 
 		static public void MultiplyUInt8 (byte[] memory, ushort bOffset, ushort cOffset, ushort aOffset) {
@@ -44,79 +49,7 @@ namespace HelloWorld.Miscellaneous
 
 		static public void EndOfInstructions () {}
 
-		static public ushort ProcessInstruction (byte[] instructions, byte[] memory, ushort currentInstructionOffset){
-			ushort arg1, arg2, arg3;
-			ushort currentInstruction = BitConverter.ToUInt16 (instructions, currentInstructionOffset);
-			currentInstructionOffset += 2;
-			switch (currentInstruction) {
-			case (ushort) InstructionCode.AssignUInt8:
-				arg1 = BitConverter.ToUInt16 (instructions, currentInstructionOffset);
-				currentInstructionOffset += 2;
-				AssignUInt8 (memory, arg1, instructions [currentInstructionOffset++]);
-				currentInstructionOffset += 3;
-				break;
-			case (ushort) InstructionCode.MultiplyUInt8:
-				arg1 = BitConverter.ToUInt16 (instructions, currentInstructionOffset);
-				currentInstructionOffset += 2;
-				arg2 = BitConverter.ToUInt16 (instructions, currentInstructionOffset);
-				currentInstructionOffset += 2;
-				arg3 = BitConverter.ToUInt16 (instructions, currentInstructionOffset);
-				currentInstructionOffset += 2;
-				MultiplyUInt8 (memory, arg1, arg2, arg3);
-				break;
-			case (ushort) InstructionCode.DivideUInt8:
-				arg1 = BitConverter.ToUInt16 (instructions, currentInstructionOffset);
-				currentInstructionOffset += 2;
-				arg2 = BitConverter.ToUInt16 (instructions, currentInstructionOffset);
-				currentInstructionOffset += 2;
-				arg3 = BitConverter.ToUInt16 (instructions, currentInstructionOffset);
-				currentInstructionOffset += 2;
-				DivideUInt8 (memory, arg1, arg2, arg3);
-				break;
-			case (ushort) InstructionCode.LessEqualUInt8:
-				arg1 = BitConverter.ToUInt16 (instructions, currentInstructionOffset);
-				currentInstructionOffset += 2;
-				arg2 = BitConverter.ToUInt16 (instructions, currentInstructionOffset);
-				currentInstructionOffset += 2;
-				arg3 = BitConverter.ToUInt16 (instructions, currentInstructionOffset);
-				currentInstructionOffset += 2;
-				LessEqualUInt8 (memory, arg1, arg2, arg3);
-				break;
-			case (ushort) InstructionCode.SkipIfZero:
-				arg1 = BitConverter.ToUInt16 (instructions, currentInstructionOffset); 
-				currentInstructionOffset = SkipIfZero (memory, arg1, (ushort) (currentInstructionOffset - 2));
-				break;
-			case (ushort) InstructionCode.Jump:
-				arg1 = BitConverter.ToUInt16 (instructions, currentInstructionOffset);
-				currentInstructionOffset = Jump (arg1);
-				break;
-			case (ushort) InstructionCode.EndOfInstructions:
-				currentInstructionOffset = 0;
-				break;
-			default:
-				throw new Exception("Invalid instruction code");
-				break;
-			}
-			return currentInstructionOffset;
-		}
-
-		static public void RunProgram_SugarReqiure () {
-			//Написание программы
-			/*
-			 static public void EnoughSugar () {
-				double ThermosVolume = 1.5; 
-				double cupVolume = 0.3;
-				double pieceOfSugarMass = 5;
-				int piecesOfSugarForCup = 3;
-				double sugarMass = 55;
-				double sugarMassRequired;
-				sugarMassRequired = thermosVolume * piecesOfSugarForCup * pieceOfSugarMass / cupVolume;
-				if (sugarMassRequired <= sugarMass)
-					result = 1;
-				else result = 0;
-			}*/
-
-			//Компиляция
+		static public ushort GetInstructionsSugar (byte[] instructions) {
 			ushort currentOffset = 0;
 			ushort thermosVolumeOffset = currentOffset++;
 			ushort cupVolumeOffset = currentOffset++;
@@ -128,10 +61,8 @@ namespace HelloWorld.Miscellaneous
 			ushort sugarMassforCupOffset = currentOffset++;
 			ushort cupsInThermosOffset = currentOffset++;
 			ushort resultOffset = currentOffset++;
-				
+
 			ushort currentInstructionOffset = 0;
-			ushort instructionsLength = 255;
-			byte[] instructions = new byte[instructionsLength];
 			currentInstructionOffset = WriteBytesToArray (instructions, (ushort) InstructionCode.AssignUInt8, currentInstructionOffset);
 			currentInstructionOffset = WriteBytesToArray (instructions, thermosVolumeOffset, currentInstructionOffset);
 			instructions [currentInstructionOffset++] = 15;
@@ -189,8 +120,114 @@ namespace HelloWorld.Miscellaneous
 			ifZeroOffset = WriteBytesToArray (instructions, (ushort) currentInstructionOffset, (ushort) (ifZeroOffset + 2));
 			currentInstructionOffset = WriteBytesToArray (instructions, (ushort) InstructionCode.EndOfInstructions, currentInstructionOffset);
 
+			return currentOffset; // memory size
+		}
+
+		static public ushort GetInstructionsOrderNumbers (byte[] instructions) {
+			byte[] composeInstructions = new byte[] {
+				1, 0, 0, 0, 52, 0, 0, 0, // value1 = 52
+				1, 0, 1, 0, 14, 0, 0, 0, // value2 = 14
+				5, 0, 0, 0, 1, 0, 4, 0, // ordered = (val1 <= val2)
+				6, 0, 4, 0, 0, 0, 0, 0, // skipIfZero (ordered)
+				7, 0, 56, 0, 0, 0, 0, 0, // jump (56)
+				2, 0, 2, 0, 1, 0, 0, 0, // min = value2
+				2, 0, 3, 0, 0, 0, 0, 0, // max = value1
+				0, 0 // End
+			};
+			for (int i = 0; i < 56; i++)
+				instructions [i] = composeInstructions [i];
+			return 5; // memory size
+		}
+
+		static public ushort ProcessInstruction (byte[] instructions, byte[] memory, ushort currentInstructionOffset){
+			ushort arg1, arg2, arg3;
+			ushort currentInstruction = BitConverter.ToUInt16 (instructions, currentInstructionOffset);
+			currentInstructionOffset += 2;
+			switch (currentInstruction) {
+			case (ushort) InstructionCode.AssignUInt8:
+				arg1 = BitConverter.ToUInt16 (instructions, currentInstructionOffset);
+				currentInstructionOffset += 2;
+				AssignUInt8 (memory, arg1, instructions [currentInstructionOffset++]);
+				currentInstructionOffset += 3;
+				break;
+			case (ushort) InstructionCode.Assign:
+				arg1 = BitConverter.ToUInt16 (instructions, currentInstructionOffset);
+				currentInstructionOffset += 2;
+				arg2 = BitConverter.ToUInt16 (instructions, currentInstructionOffset);
+				currentInstructionOffset += 2;
+				Assign(memory, arg1, arg2);
+				currentInstructionOffset += 2;
+				break;
+			case (ushort) InstructionCode.MultiplyUInt8:
+				arg1 = BitConverter.ToUInt16 (instructions, currentInstructionOffset);
+				currentInstructionOffset += 2;
+				arg2 = BitConverter.ToUInt16 (instructions, currentInstructionOffset);
+				currentInstructionOffset += 2;
+				arg3 = BitConverter.ToUInt16 (instructions, currentInstructionOffset);
+				currentInstructionOffset += 2;
+				MultiplyUInt8 (memory, arg1, arg2, arg3);
+				break;
+			case (ushort) InstructionCode.DivideUInt8:
+				arg1 = BitConverter.ToUInt16 (instructions, currentInstructionOffset);
+				currentInstructionOffset += 2;
+				arg2 = BitConverter.ToUInt16 (instructions, currentInstructionOffset);
+				currentInstructionOffset += 2;
+				arg3 = BitConverter.ToUInt16 (instructions, currentInstructionOffset);
+				currentInstructionOffset += 2;
+				DivideUInt8 (memory, arg1, arg2, arg3);
+				break;
+			case (ushort) InstructionCode.LessEqualUInt8:
+				arg1 = BitConverter.ToUInt16 (instructions, currentInstructionOffset);
+				currentInstructionOffset += 2;
+				arg2 = BitConverter.ToUInt16 (instructions, currentInstructionOffset);
+				currentInstructionOffset += 2;
+				arg3 = BitConverter.ToUInt16 (instructions, currentInstructionOffset);
+				currentInstructionOffset += 2;
+				LessEqualUInt8 (memory, arg1, arg2, arg3);
+				break;
+			case (ushort) InstructionCode.SkipIfZero:
+				arg1 = BitConverter.ToUInt16 (instructions, currentInstructionOffset); 
+				currentInstructionOffset = SkipIfZero (memory, arg1, (ushort) (currentInstructionOffset - 2));
+				break;
+			case (ushort) InstructionCode.Jump:
+				arg1 = BitConverter.ToUInt16 (instructions, currentInstructionOffset);
+				currentInstructionOffset = Jump (arg1);
+				break;
+			case (ushort) InstructionCode.EndOfInstructions:
+				currentInstructionOffset = 0;
+				break;
+			default:
+				throw new Exception("Invalid instruction code");
+			}
+			return currentInstructionOffset;
+		}
+
+		static public void RunProgram () {
+			//Написание программы
+			/*
+			 static public void EnoughSugar () {
+				double ThermosVolume = 1.5; 
+				double cupVolume = 0.3;
+				double pieceOfSugarMass = 5;
+				int piecesOfSugarForCup = 3;
+				double sugarMass = 55;
+				double sugarMassRequired;
+				sugarMassRequired = thermosVolume * piecesOfSugarForCup * pieceOfSugarMass / cupVolume;
+				if (sugarMassRequired <= sugarMass)
+					result = 1;
+				else result = 0;
+			}*/
+
+			//Компиляция
+						
+			ushort currentInstructionOffset = 0;
+			ushort instructionsLength = 255;
+			byte[] instructions = new byte[instructionsLength];
+			//ushort memorySize = GetInstructionsSugar (instructions);
+			ushort memorySize = GetInstructionsOrderNumbers (instructions);
+
 			//Загрузка
-			byte[] memory = new byte[currentOffset];
+			byte[] memory = new byte[memorySize];
 			//Выполнение
 			currentInstructionOffset = 0;
 			do
