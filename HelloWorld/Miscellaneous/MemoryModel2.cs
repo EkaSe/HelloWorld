@@ -57,6 +57,14 @@ namespace HelloWorld.Miscellaneous
 
 		static public void EndOfInstructions () {}
 
+		static public void WriteInstruction(byte[] instructions, ref ushort offset, ushort instructionCode, 
+			ushort argument1, ushort argument2, ushort argument3) {
+			offset = WriteBytesToArray (instructions, instructionCode, offset);
+			offset = WriteBytesToArray (instructions, argument1, offset);
+			offset = WriteBytesToArray (instructions, argument2, offset);
+			offset = WriteBytesToArray (instructions, argument3, offset);
+		}
+
 		static public void WriteInstructionsSugar (byte[] instructions, out ushort memorySize) {
 			ushort currentOffset = 0;
 			ushort thermosVolumeOffset = currentOffset++;
@@ -71,63 +79,41 @@ namespace HelloWorld.Miscellaneous
 			ushort resultOffset = currentOffset++;
 
 			ushort currentInstructionOffset = 0;
-			currentInstructionOffset = WriteBytesToArray (instructions, (ushort) InstructionCode.AssignUInt8Const, currentInstructionOffset);
-			currentInstructionOffset = WriteBytesToArray (instructions, thermosVolumeOffset, currentInstructionOffset);
-			instructions [currentInstructionOffset++] = 15;
-			currentInstructionOffset += 3;
-			currentInstructionOffset = WriteBytesToArray (instructions, (ushort) InstructionCode.AssignUInt8Const, currentInstructionOffset);
-			currentInstructionOffset = WriteBytesToArray (instructions, cupVolumeOffset, currentInstructionOffset);
-			instructions [currentInstructionOffset++] = 3;
-			currentInstructionOffset += 3;
-			currentInstructionOffset = WriteBytesToArray (instructions, (ushort) InstructionCode.AssignUInt8Const, currentInstructionOffset);
-			currentInstructionOffset = WriteBytesToArray (instructions, pieceOfSugarMassOffset, currentInstructionOffset);
-			instructions [currentInstructionOffset++] = 5;
-			currentInstructionOffset += 3;
-			currentInstructionOffset = WriteBytesToArray (instructions, (ushort) InstructionCode.AssignUInt8Const, currentInstructionOffset);
-			currentInstructionOffset = WriteBytesToArray (instructions, pieceOfSugarForCupOffset, currentInstructionOffset);
-			instructions [currentInstructionOffset++] = 3;
-			currentInstructionOffset += 3;
-			currentInstructionOffset = WriteBytesToArray (instructions, (ushort) InstructionCode.AssignUInt8Const, currentInstructionOffset);
-			currentInstructionOffset = WriteBytesToArray (instructions, sugarMassAvailableOffset, currentInstructionOffset);
-			instructions [currentInstructionOffset++] = 55;
-			currentInstructionOffset += 3;
-			currentInstructionOffset = WriteBytesToArray (instructions, (ushort) InstructionCode.MultiplyUInt8, currentInstructionOffset);
-			currentInstructionOffset = WriteBytesToArray (instructions, pieceOfSugarForCupOffset, currentInstructionOffset);
-			currentInstructionOffset = WriteBytesToArray (instructions, pieceOfSugarMassOffset, currentInstructionOffset);
-			currentInstructionOffset = WriteBytesToArray (instructions, sugarMassforCupOffset, currentInstructionOffset);
-			currentInstructionOffset = WriteBytesToArray (instructions, (ushort) InstructionCode.DivideUInt8, currentInstructionOffset);
-			currentInstructionOffset = WriteBytesToArray (instructions, thermosVolumeOffset, currentInstructionOffset);
-			currentInstructionOffset = WriteBytesToArray (instructions, cupVolumeOffset, currentInstructionOffset);
-			currentInstructionOffset = WriteBytesToArray (instructions, cupsInThermosOffset, currentInstructionOffset);
-			currentInstructionOffset = WriteBytesToArray (instructions, (ushort) InstructionCode.MultiplyUInt8, currentInstructionOffset);
-			currentInstructionOffset = WriteBytesToArray (instructions, sugarMassforCupOffset, currentInstructionOffset);
-			currentInstructionOffset = WriteBytesToArray (instructions, cupsInThermosOffset, currentInstructionOffset);
-			currentInstructionOffset = WriteBytesToArray (instructions, sugarMassRequiredOffset, currentInstructionOffset);
-			currentInstructionOffset = WriteBytesToArray (instructions, (ushort) InstructionCode.LessEqualUInt8, currentInstructionOffset);
-			currentInstructionOffset = WriteBytesToArray (instructions, sugarMassRequiredOffset, currentInstructionOffset);
-			currentInstructionOffset = WriteBytesToArray (instructions, sugarMassAvailableOffset, currentInstructionOffset);
-			currentInstructionOffset = WriteBytesToArray (instructions, isEnoughSugarOffset, currentInstructionOffset);
-			currentInstructionOffset = WriteBytesToArray (instructions, (ushort) InstructionCode.SkipIfZero, currentInstructionOffset);
-			currentInstructionOffset = WriteBytesToArray (instructions, isEnoughSugarOffset, currentInstructionOffset);
-			currentInstructionOffset += 4;
+			WriteInstruction (instructions, ref currentInstructionOffset, 
+				(ushort)InstructionCode.AssignUInt8Const, thermosVolumeOffset, 15, 0);
+			WriteInstruction (instructions, ref currentInstructionOffset, 
+				(ushort)InstructionCode.AssignUInt8Const, cupVolumeOffset, 3, 0);
+			WriteInstruction (instructions, ref currentInstructionOffset, 
+				(ushort)InstructionCode.AssignUInt8Const, pieceOfSugarMassOffset, 5, 0);
+			WriteInstruction (instructions, ref currentInstructionOffset, 
+				(ushort)InstructionCode.AssignUInt8Const, pieceOfSugarForCupOffset, 3, 0);
+			WriteInstruction (instructions, ref currentInstructionOffset, 
+				(ushort)InstructionCode.AssignUInt8Const, sugarMassAvailableOffset, 55, 0);
+			WriteInstruction (instructions, ref currentInstructionOffset, 
+				(ushort)InstructionCode.MultiplyUInt8, pieceOfSugarForCupOffset, pieceOfSugarMassOffset, sugarMassforCupOffset);
+			WriteInstruction (instructions, ref currentInstructionOffset, 
+				(ushort)InstructionCode.DivideUInt8, thermosVolumeOffset, cupVolumeOffset, cupsInThermosOffset);
+			WriteInstruction (instructions, ref currentInstructionOffset, 
+				(ushort)InstructionCode.MultiplyUInt8, sugarMassforCupOffset, cupsInThermosOffset, sugarMassRequiredOffset);
+			WriteInstruction (instructions, ref currentInstructionOffset, 
+				(ushort)InstructionCode.LessEqualUInt8, sugarMassRequiredOffset, sugarMassAvailableOffset, isEnoughSugarOffset);
+			WriteInstruction (instructions, ref currentInstructionOffset, 
+				(ushort)InstructionCode.SkipIfZero, isEnoughSugarOffset, 0, 0);
 			ushort ifNotZeroOffset = currentInstructionOffset;
-			currentInstructionOffset = WriteBytesToArray (instructions, (ushort) InstructionCode.Jump, currentInstructionOffset);
-			currentInstructionOffset += 6;
-			currentInstructionOffset = WriteBytesToArray (instructions, (ushort) InstructionCode.AssignUInt8Const, currentInstructionOffset);
-			currentInstructionOffset = WriteBytesToArray (instructions, resultOffset, currentInstructionOffset);
-			instructions [currentInstructionOffset++] = 0;
-			currentInstructionOffset += 3;
+			WriteInstruction (instructions, ref currentInstructionOffset, 
+				(ushort)InstructionCode.Jump, 0, 0, 0);
+			WriteInstruction (instructions, ref currentInstructionOffset, 
+				(ushort)InstructionCode.AssignUInt8Const, resultOffset, 0, 0);
 			ushort ifZeroOffset = currentInstructionOffset;
-			currentInstructionOffset = WriteBytesToArray (instructions, (ushort) InstructionCode.Jump, currentInstructionOffset);
-			currentInstructionOffset += 6;
+			WriteInstruction (instructions, ref currentInstructionOffset, 
+				(ushort)InstructionCode.Jump, 0, 0, 0);
 			ifNotZeroOffset = WriteBytesToArray (instructions, (ushort) currentInstructionOffset, (ushort) (ifNotZeroOffset + 2));
-			currentInstructionOffset = WriteBytesToArray (instructions, (ushort) InstructionCode.AssignUInt8Const, currentInstructionOffset);
-			currentInstructionOffset = WriteBytesToArray (instructions, resultOffset, currentInstructionOffset);
-			instructions [currentInstructionOffset++] = 1;
-			currentInstructionOffset += 3;
+			WriteInstruction (instructions, ref currentInstructionOffset, 
+				(ushort)InstructionCode.AssignUInt8Const, resultOffset, 1, 0);
 			ifZeroOffset = WriteBytesToArray (instructions, (ushort) currentInstructionOffset, (ushort) (ifZeroOffset + 2));
-			currentInstructionOffset = WriteBytesToArray (instructions, (ushort) InstructionCode.EndOfInstructions, currentInstructionOffset);
-
+			WriteInstruction (instructions, ref currentInstructionOffset, 
+				(ushort)InstructionCode.EndOfInstructions, 0, 0, 0);
+			
 			memorySize = currentOffset;
 		}
 
@@ -236,8 +222,8 @@ namespace HelloWorld.Miscellaneous
 			ushort instructionsLength = 255;
 			byte[] instructions = new byte[instructionsLength];
 			ushort memorySize = 0;
-			//WriteInstructionsSugar(instructions, out memorySize);
-			WriteInstructionsOrderNumbers (instructions, out memorySize);
+			WriteInstructionsSugar(instructions, out memorySize);
+			//WriteInstructionsOrderNumbers (instructions, out memorySize);
 
 			//Загрузка
 			byte[] memory = new byte[memorySize];
