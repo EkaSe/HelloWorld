@@ -15,52 +15,55 @@ namespace HelloWorld.Miscellaneous
 			Jump
 		};
 
+		static public Func<ushort, byte[], ushort, ushort, ushort, ushort>[] instructionsList = 
+			new Func<ushort, byte[], ushort, ushort, ushort, ushort>[8]; 
+
 		static public ushort WriteBytesToArray (byte[] array, ushort value, ushort startOffset) {
 			array [startOffset++] = BitConverter.GetBytes (value) [0];
 			array [startOffset++] = BitConverter.GetBytes (value) [1];;
 			return startOffset;
 		}
 
-		static public void AssignUInt8Const (ref ushort instructionOffset, byte[] memory, ushort offset, ushort value, ushort unused) {
+		static public ushort AssignUInt8Const (ushort instructionOffset, byte[] memory, ushort offset, ushort value, ushort unused) {
 			memory [offset] = BitConverter.GetBytes (value) [0];
-			instructionOffset += 8;
+			return (ushort) (instructionOffset + 8);
 		}
 
-		static public void AssignUInt8Var (ref ushort instructionOffset, byte[] memory, ushort destinationOffset, ushort sourceOffset, ushort unused) {
+		static public ushort AssignUInt8Var (ushort instructionOffset, byte[] memory, ushort destinationOffset, ushort sourceOffset, ushort unused) {
 			memory [destinationOffset] = memory [sourceOffset];
-			instructionOffset += 8;
+			return (ushort) (instructionOffset + 8);
 		}
 
-		static public void MultiplyUInt8 (ref ushort instructionOffset, byte[] memory, ushort bOffset, ushort cOffset, ushort aOffset) {
+		static public ushort MultiplyUInt8 (ushort instructionOffset, byte[] memory, ushort bOffset, ushort cOffset, ushort aOffset) {
 			memory [aOffset] = (byte) (memory [bOffset] * memory [cOffset]);
-			instructionOffset += 8;
+			return (ushort) (instructionOffset + 8);
 		}
 
-		static public void DivideUInt8 (ref ushort instructionOffset, byte[] memory, ushort bOffset, ushort cOffset, ushort aOffset) { 
+		static public ushort DivideUInt8 (ushort instructionOffset, byte[] memory, ushort bOffset, ushort cOffset, ushort aOffset) { 
 			memory [aOffset] = (byte) (memory [bOffset] / memory [cOffset]);
-			instructionOffset += 8;
+			return (ushort) (instructionOffset + 8);
 		}
-
-		static public void LessEqualUInt8 (ref ushort instructionOffset, byte[] memory, ushort bOffset, ushort cOffset, ushort resultOffset) { 
+	
+		static public ushort LessEqualUInt8 (ushort instructionOffset, byte[] memory, ushort bOffset, ushort cOffset, ushort resultOffset) { 
 			if (memory [bOffset] <= memory [cOffset])
 				memory [resultOffset] = 1;
 			else
 				memory [resultOffset] = 0;
-			instructionOffset += 8;
+			return (ushort) (instructionOffset + 8);
 		}
 
-		static public void SkipIfZero (ref ushort instructionOffset, byte[] memory, ushort valueOffset, ushort unused1, ushort unused2) {
+		static public ushort SkipIfZero (ushort instructionOffset, byte[] memory, ushort valueOffset, ushort unused1, ushort unused2) {
 			if (memory [valueOffset] == 0)
-				instructionOffset += 16;
+				return (ushort) (instructionOffset + 16);
 			else
-				instructionOffset += 8;
+				return (ushort) (instructionOffset + 8);
 		}
 
-		static public void Jump (ref ushort currentInstructionOffset, byte[] memory, ushort instructionOffset, ushort unused1, ushort unused2){
-			currentInstructionOffset = instructionOffset;
+		static public ushort Jump (ushort currentInstructionOffset, byte[] memory, ushort instructionOffset, ushort unused1, ushort unused2){
+			return (ushort) instructionOffset;
 		}
 
-		static public ushort EndOfInstructions (ref ushort instructionOffset, byte[] unused, ushort unused1, ushort unused2, ushort unused3) {
+		static public ushort EndOfInstructions (ushort instructionOffset, byte[] unused, ushort unused1, ushort unused2, ushort unused3) {
 			return 0;
 		}
 
@@ -144,40 +147,22 @@ namespace HelloWorld.Miscellaneous
 		}
 
 		static public ushort ProcessInstruction (byte[] instructions, byte[] memory, ushort currentInstructionOffset){
+			instructionsList [(int)InstructionCode.EndOfInstructions] = EndOfInstructions;
+			instructionsList [(int)InstructionCode.AssignUInt8Const] = AssignUInt8Const;
+			instructionsList [(int)InstructionCode.AssignUInt8Var] = AssignUInt8Var; 
+			instructionsList [(int)InstructionCode.MultiplyUInt8] = MultiplyUInt8; 
+			instructionsList [(int)InstructionCode.DivideUInt8] = DivideUInt8;
+			instructionsList [(int)InstructionCode.LessEqualUInt8] = LessEqualUInt8; 
+			instructionsList [(int)InstructionCode.SkipIfZero] = SkipIfZero; 
+			instructionsList [(int)InstructionCode.Jump] = Jump;
 			ushort currentInstruction = BitConverter.ToUInt16 (instructions, currentInstructionOffset);
 			ushort arg1 = BitConverter.ToUInt16 (instructions, (currentInstructionOffset + 2));
 			ushort arg2 = BitConverter.ToUInt16 (instructions, (currentInstructionOffset + 4));
 			ushort arg3 = BitConverter.ToUInt16 (instructions, (currentInstructionOffset + 6));
-			//Func< instruction = new Func[8];
-			//instrucions[InstructionCode.Jump] = Jump;
-			switch (currentInstruction) {
-			case (ushort) InstructionCode.AssignUInt8Const:
-				AssignUInt8Const (ref currentInstructionOffset, memory, arg1, arg2, arg3);
-				break;
-			case (ushort) InstructionCode.AssignUInt8Var:
-				AssignUInt8Var(ref currentInstructionOffset, memory, arg1, arg2, arg3);
-				break;
-			case (ushort) InstructionCode.MultiplyUInt8:
-				MultiplyUInt8 (ref currentInstructionOffset, memory, arg1, arg2, arg3);
-				break;
-			case (ushort) InstructionCode.DivideUInt8:
-				DivideUInt8 (ref currentInstructionOffset, memory, arg1, arg2, arg3);
-				break;
-			case (ushort) InstructionCode.LessEqualUInt8:
-				LessEqualUInt8 (ref currentInstructionOffset, memory, arg1, arg2, arg3);
-				break;
-			case (ushort) InstructionCode.SkipIfZero:
-				SkipIfZero (ref currentInstructionOffset, memory, arg1, arg2, arg3);
-				break;
-			case (ushort) InstructionCode.Jump:
-				Jump (ref currentInstructionOffset, memory, arg1, arg2, arg3);
-				break;
-			case (ushort) InstructionCode.EndOfInstructions:
-				currentInstructionOffset = EndOfInstructions (ref currentInstructionOffset, memory, arg1, arg2, arg3);
-				break;
-			default:
-				throw new Exception("Invalid instruction code");
-			}
+			if (currentInstruction >= 8) {
+				throw new Exception ("Invalid instruction code");
+			};
+			currentInstructionOffset = instructionsList [currentInstruction] (currentInstructionOffset, memory, arg1, arg2, arg3);
 			return currentInstructionOffset;
 		}
 
