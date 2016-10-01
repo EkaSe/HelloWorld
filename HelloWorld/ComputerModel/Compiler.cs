@@ -10,7 +10,8 @@ namespace HelloWorld.ComputerModel
 		DivideUInt8, 
 		LessEqualUInt8, 
 		SkipIfZero, 
-		Jump
+		Jump,
+		AddUInt8Const
 	};
 
 	public class Compiler
@@ -98,6 +99,36 @@ namespace HelloWorld.ComputerModel
 				instructions [i] = composeInstructions [i];
 			};
 			memorySize = 5;
+		}
+
+		static public void WriteInstructionsFactorialCycle(byte[] instructions, out ushort memorySize) {
+			ushort currentOffset = 0;
+			ushort nOffset = currentOffset++;
+			ushort factorialOffset = currentOffset++;
+			ushort iOffset = currentOffset++;
+			ushort iLessEqualNOffset = currentOffset++;
+			ushort currentInstructionOffset = 0;
+			WriteInstruction (instructions, ref currentInstructionOffset, 
+				(ushort)InstructionCode.AssignUInt8Const, nOffset, 5, 0);
+			WriteInstruction (instructions, ref currentInstructionOffset, 
+				(ushort)InstructionCode.AssignUInt8Const, factorialOffset, 1, 0);
+			WriteInstruction (instructions, ref currentInstructionOffset, 
+				(ushort)InstructionCode.AssignUInt8Const, iOffset, 1, 0);
+			ushort cycleStart = currentInstructionOffset;
+			WriteInstruction (instructions, ref currentInstructionOffset, 
+				(ushort)InstructionCode.MultiplyUInt8, iOffset, factorialOffset, factorialOffset);
+			WriteInstruction (instructions, ref currentInstructionOffset, 
+				(ushort)InstructionCode.AddUInt8Const, iOffset, 1, iOffset);
+			WriteInstruction (instructions, ref currentInstructionOffset, 
+				(ushort)InstructionCode.LessEqualUInt8, iOffset, nOffset, iLessEqualNOffset);
+			WriteInstruction (instructions, ref currentInstructionOffset, 
+				(ushort)InstructionCode.SkipIfZero, iLessEqualNOffset, 0, 0);
+			WriteInstruction (instructions, ref currentInstructionOffset, 
+				(ushort)InstructionCode.Jump, cycleStart, 0, 0);
+			WriteInstruction (instructions, ref currentInstructionOffset, 
+				(ushort)InstructionCode.EndOfInstructions, 0, 0, 0);
+
+			memorySize = currentOffset;
 		}
 	}
 }

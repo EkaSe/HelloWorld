@@ -17,7 +17,8 @@ namespace HelloWorld.ComputerModel
 				ushort arg2 = BitConverter.ToUInt16 (Memory.RAM, (currentOffset + 4));
 				ushort arg3 = BitConverter.ToUInt16 (Memory.RAM, (currentOffset + 6));
 				Compiler.WriteBytesToArray (Memory.RAM, (ushort) (arg1 + 8), (ushort) (currentOffset + 2));
-				if (currentInstruction != (ushort) InstructionCode.AssignUInt8Const)
+				if ((currentInstruction != (ushort) InstructionCode.AssignUInt8Const) &&
+					(currentInstruction != (ushort) InstructionCode.AddUInt8Const))
 					Compiler.WriteBytesToArray (Memory.RAM, (ushort) (arg2 + 8), (ushort) (currentOffset + 4));
 				Compiler.WriteBytesToArray (Memory.RAM, (ushort) (arg3 + 8), (ushort) (currentOffset + 6));
 				if (currentInstruction == (ushort) InstructionCode.Jump)
@@ -48,7 +49,8 @@ namespace HelloWorld.ComputerModel
 			byte[] instructions = new byte[instructionsLength];
 			ushort memorySize = 0;
 			//Compiler.WriteInstructionsSugar(instructions, out memorySize);
-			Compiler.WriteInstructionsOrderNumbers (instructions, out memorySize);
+			//Compiler.WriteInstructionsOrderNumbers (instructions, out memorySize);
+			Compiler.WriteInstructionsFactorialCycle (instructions, out memorySize);
 			Compile (memorySize, instructions);
 
 			//Выполнение
