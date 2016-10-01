@@ -5,6 +5,7 @@ using HelloWorld.Geometry;
 using HelloWorld.Algebra;
 using HelloWorld.HitTest;
 using HelloWorld.Miscellaneous;
+using HelloWorld.ComputerModel;
 
 namespace HelloWorld
 {
@@ -14,7 +15,7 @@ namespace HelloWorld
 		{
 			//LoopExamplesTest.TestLoops ();
 			//QuadraticEquationTest.RunTests ();
-			MemoryModel2.RunProgram ();
+			Computer.Start ();
 		}
 	}
 }

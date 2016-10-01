@@ -49,7 +49,10 @@
     <Compile Include="HitTest\HitTarget.cs" />
     <Compile Include="HitTest\HitTargetTest.cs" />
     <Compile Include="Miscellaneous\MemoryModel.cs" />
-    <Compile Include="Miscellaneous\MemoryModel2.cs" />
+    <Compile Include="ComputerModel\Compiler.cs" />
+    <Compile Include="ComputerModel\Processor.cs" />
+    <Compile Include="ComputerModel\Memory.cs" />
+    <Compile Include="ComputerModel\Computer.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
@@ -58,5 +61,6 @@
     <Folder Include="Miscellaneous\" />
     <Folder Include="Algebra\" />
     <Folder Include="HitTest\" />
+    <Folder Include="ComputerModel\" />
   </ItemGroup>
 </Project>
