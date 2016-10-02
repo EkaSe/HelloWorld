@@ -11,7 +11,9 @@ namespace HelloWorld.ComputerModel
 		LessEqualUInt8, 
 		SkipIfZero, 
 		Jump,
-		AddUInt8Const
+		AddUInt8Const,
+		StartMethod,
+		CallMethod
 	};
 
 	public class Compiler
@@ -30,7 +32,7 @@ namespace HelloWorld.ComputerModel
 			offset = WriteBytesToArray (instructions, argument3, offset);
 		}
 
-		static public void WriteInstructionsSugar (byte[] instructions, out ushort memorySize) {
+		static public void WriteInstructionsSugar (byte[] instructions, out ushort memorySize, out ushort instructionsSize) {
 			ushort currentOffset = 0;
 			ushort thermosVolumeOffset = currentOffset++;
 			ushort cupVolumeOffset = currentOffset++;
@@ -42,7 +44,12 @@ namespace HelloWorld.ComputerModel
 			ushort sugarMassforCupOffset = currentOffset++;
 			ushort cupsInThermosOffset = currentOffset++;
 			ushort resultOffset = currentOffset++;
+
+			memorySize = currentOffset;
+
 			ushort currentInstructionOffset = 0;
+			WriteInstruction (instructions, ref currentInstructionOffset, 
+				(ushort)InstructionCode.StartMethod, memorySize, 0, 0);
 			WriteInstruction (instructions, ref currentInstructionOffset, 
 				(ushort)InstructionCode.AssignUInt8Const, thermosVolumeOffset, 15, 0);
 			WriteInstruction (instructions, ref currentInstructionOffset, 
@@ -78,10 +85,10 @@ namespace HelloWorld.ComputerModel
 			WriteInstruction (instructions, ref currentInstructionOffset, 
 				(ushort)InstructionCode.EndOfInstructions, 0, 0, 0);
 
-			memorySize = currentOffset;
+			instructionsSize = currentInstructionOffset;
 		}
 
-		static public void WriteInstructionsOrderNumbers (byte[] instructions, out ushort memorySize) {
+		static public void WriteInstructionsOrderNumbers (byte[] instructions, out ushort memorySize, out ushort instructionsSize) {
 			byte[] composeInstructions = new byte[] {
 				/* 0*/ 1, 0, 0, 0, 15, 0, 0, 0, // value1 = 15
 				/* 8*/ 1, 0, 1, 0, 70, 0, 0, 0, // value2 = 70
@@ -93,21 +100,27 @@ namespace HelloWorld.ComputerModel
 				/*56*/ 7, 0, 80, 0, 0, 0, 0, 0, // jump (80)
 				/*64*/ 2, 0, 2, 0, 0, 0, 0, 0, // min = value1
 				/*72*/ 2, 0, 3, 0, 1, 0, 0, 0, // max = value2
-				/*80*/ 0, 0 // End
+				/*80*/ 0, 0, 0, 0, 0, 0, 0, 0 // End
 			};
-			for (int i = 0; i < 82; i++) {
+			for (int i = 0; i < 88; i++) {
 				instructions [i] = composeInstructions [i];
 			};
 			memorySize = 5;
+			instructionsSize = 88;
 		}
 
-		static public void WriteInstructionsFactorialCycle(byte[] instructions, out ushort memorySize) {
+		static public void WriteInstructionsFactorialCycle(byte[] instructions, out ushort memorySize, out ushort instructionsSize) {
 			ushort currentOffset = 0;
 			ushort nOffset = currentOffset++;
 			ushort factorialOffset = currentOffset++;
 			ushort iOffset = currentOffset++;
 			ushort iLessEqualNOffset = currentOffset++;
+			memorySize = currentOffset;
+
 			ushort currentInstructionOffset = 0;
+
+			WriteInstruction (instructions, ref currentInstructionOffset, 
+				(ushort)InstructionCode.StartMethod, memorySize, 0, 0);
 			WriteInstruction (instructions, ref currentInstructionOffset, 
 				(ushort)InstructionCode.AssignUInt8Const, nOffset, 5, 0);
 			WriteInstruction (instructions, ref currentInstructionOffset, 
@@ -128,7 +141,7 @@ namespace HelloWorld.ComputerModel
 			WriteInstruction (instructions, ref currentInstructionOffset, 
 				(ushort)InstructionCode.EndOfInstructions, 0, 0, 0);
 
-			memorySize = currentOffset;
+			instructionsSize = currentInstructionOffset;
 		}
 	}
 }

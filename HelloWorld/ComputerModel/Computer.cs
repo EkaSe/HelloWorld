@@ -4,13 +4,17 @@ namespace HelloWorld.ComputerModel
 {
 	public class Computer
 	{
-		static public void Compile (ushort memorySize, byte[] instructions) {
+		static public void Compile (ushort memorySize, byte[] instructions, ushort instructionsSize) {
 			ushort currentOffset = 0;
-			Compiler.WriteInstruction (Memory.RAM, ref currentOffset, (ushort) InstructionCode.Jump, (ushort)(memorySize + 8), 0, 0);
-			for (int i = (memorySize + 8); i < 256; i++) {
-				Memory.RAM [i] = instructions [i - memorySize - 8];
+			Compiler.WriteInstruction (Memory.RAM, ref currentOffset, (ushort) InstructionCode.Jump, (ushort) 24, 0, 0);
+			Memory.RAM [Memory.stackTopOffset] = 9;
+			Memory.RAM [Memory.stackOffset] = (byte) (Memory.instructionsOffset + instructionsSize);
+			Memory.RAM [Memory.stackOffset + 1] = (byte) (Memory.RAM [Memory.stackOffset] + memorySize);
+			for (int i = 0; i < instructionsSize; i++) {
+				Memory.RAM [Memory.instructionsOffset + i] = instructions [i];
 			};
-			currentOffset = (ushort) (memorySize + 8);
+
+			/*
 			while (currentOffset < 250) {
 				ushort currentInstruction = BitConverter.ToUInt16 (Memory.RAM, currentOffset);
 				ushort arg1 = BitConverter.ToUInt16 (Memory.RAM, (currentOffset + 2));
@@ -24,7 +28,7 @@ namespace HelloWorld.ComputerModel
 				if (currentInstruction == (ushort) InstructionCode.Jump)
 					Compiler.WriteBytesToArray (Memory.RAM, (ushort) (arg1 + 8 + memorySize), (ushort) (currentOffset + 2));
 				currentOffset += 8;
-			};
+			};*/
 		}
 
 		static public void Start () {
@@ -50,8 +54,8 @@ namespace HelloWorld.ComputerModel
 			ushort memorySize = 0;
 			//Compiler.WriteInstructionsSugar(instructions, out memorySize);
 			//Compiler.WriteInstructionsOrderNumbers (instructions, out memorySize);
-			Compiler.WriteInstructionsFactorialCycle (instructions, out memorySize);
-			Compile (memorySize, instructions);
+			Compiler.WriteInstructionsFactorialCycle (instructions, out memorySize, out instructionsLength);
+			Compile (memorySize, instructions, instructionsLength);
 
 			//Выполнение
 			Processor.RunProgram ();
