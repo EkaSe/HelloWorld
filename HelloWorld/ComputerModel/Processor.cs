@@ -5,7 +5,7 @@ namespace HelloWorld.ComputerModel
 	public class Processor
 	{
 		static public Func<ushort, ushort, ushort, ushort, ushort>[] instructionsList = 
-			new Func<ushort, ushort, ushort, ushort, ushort>[11]; 
+			new Func<ushort, ushort, ushort, ushort, ushort>[12]; 
 
 		static public ushort AssignUInt8Const (ushort instructionOffset, ushort offset, ushort value, ushort unused) {
 			Memory.RAM [offset] = BitConverter.GetBytes (value) [0];
@@ -80,6 +80,14 @@ namespace HelloWorld.ComputerModel
 			return (ushort) startMethodOffset;
 		}
 
+		static public ushort AreEqualUInt8 (ushort instructionOffset, ushort bOffset, ushort cOffset, ushort resultOffset) { 
+			if (Memory.RAM [bOffset] == Memory.RAM [cOffset])
+				Memory.RAM [resultOffset] = 1;
+			else
+				Memory.RAM [resultOffset] = 0;
+			return (ushort) (instructionOffset + 8);
+		}
+
 		static public ushort ProcessInstruction (ushort currentInstructionOffset, ref ushort startMethodOffset){
 			instructionsList [(int)InstructionCode.EndOfInstructions] = EndOfInstructions;
 			instructionsList [(int)InstructionCode.AssignUInt8Const] = AssignUInt8Const;
@@ -92,27 +100,14 @@ namespace HelloWorld.ComputerModel
 			instructionsList [(int)InstructionCode.AddUInt8Const] = AddUInt8Const;
 			instructionsList [(int)InstructionCode.StartMethod] = StartMethod;
 			instructionsList [(int)InstructionCode.CallMethod] = CallMethod;
-			/*
-			while (currentOffset < 250) {
-				ushort currentInstruction = BitConverter.ToUInt16 (Memory.RAM, currentOffset);
-				ushort arg1 = BitConverter.ToUInt16 (Memory.RAM, (currentOffset + 2));
-				ushort arg2 = BitConverter.ToUInt16 (Memory.RAM, (currentOffset + 4));
-				ushort arg3 = BitConverter.ToUInt16 (Memory.RAM, (currentOffset + 6));
-				Compiler.WriteBytesToArray (Memory.RAM, (ushort) (arg1 + 8), (ushort) (currentOffset + 2));
-				if ((currentInstruction != (ushort) InstructionCode.AssignUInt8Const) &&
-					(currentInstruction != (ushort) InstructionCode.AddUInt8Const))
-					Compiler.WriteBytesToArray (Memory.RAM, (ushort) (arg2 + 8), (ushort) (currentOffset + 4));
-				Compiler.WriteBytesToArray (Memory.RAM, (ushort) (arg3 + 8), (ushort) (currentOffset + 6));
-				if (currentInstruction == (ushort) InstructionCode.Jump)
-					Compiler.WriteBytesToArray (Memory.RAM, (ushort) (arg1 + 8 + memorySize), (ushort) (currentOffset + 2));
-				currentOffset += 8;
-			};*/
+			instructionsList [(int)InstructionCode.AreEqualUInt8] = AreEqualUInt8;
 
 			ushort currentInstruction = BitConverter.ToUInt16 (Memory.RAM, currentInstructionOffset);
+			Console.WriteLine (currentInstruction);
 			ushort arg1 = BitConverter.ToUInt16 (Memory.RAM, (currentInstructionOffset + 2));
 			ushort arg2 = BitConverter.ToUInt16 (Memory.RAM, (currentInstructionOffset + 4));
 			ushort arg3 = BitConverter.ToUInt16 (Memory.RAM, (currentInstructionOffset + 6));
-			if (currentInstruction >= 11) {
+			if (currentInstruction >= 12) {
 				throw new Exception ("Invalid instruction code");
 			};
 
@@ -123,6 +118,8 @@ namespace HelloWorld.ComputerModel
 				(currentInstruction != (ushort) InstructionCode.Jump))
 				arg1 = (byte)(arg1 + localMemoryOffset + 1);
 			if (currentInstruction == (ushort) InstructionCode.Jump)
+				arg1 += startMethodOffset;
+			if (currentInstruction == (ushort) InstructionCode.CallMethod)
 				arg1 += startMethodOffset;
 			
 			if ((currentInstruction != (ushort)InstructionCode.AssignUInt8Const) &&

@@ -54,7 +54,7 @@ namespace HelloWorld.ComputerModel
 			ushort memorySize = 0;
 			//Compiler.WriteInstructionsSugar(instructions, out memorySize);
 			//Compiler.WriteInstructionsOrderNumbers (instructions, out memorySize);
-			Compiler.WriteInstructionsFactorialCycle (instructions, out memorySize, out instructionsLength);
+			Compiler.WriteInstructionsTestFactorial (instructions, 0, out memorySize, out instructionsLength);
 			Compile (memorySize, instructions, instructionsLength);
 
 			//Выполнение
