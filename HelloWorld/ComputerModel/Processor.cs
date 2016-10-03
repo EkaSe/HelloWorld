@@ -52,7 +52,8 @@ namespace HelloWorld.ComputerModel
 			ushort outputOffset = BitConverter.ToUInt16 (Memory.RAM, (callMethodOffset + 6));
 			if (Memory.RAM [Memory.stackTopOffset] != Memory.stackOffset) {
 				Memory.RAM [Memory.stackTopOffset]--;
-				Memory.RAM [outputOffset] = Memory.RAM [localMemoryOffset + 2];
+				ushort callMethodMemoryOffset = Memory.RAM [Memory.RAM [Memory.stackTopOffset]];
+				Memory.RAM [outputOffset + callMethodMemoryOffset + 1] = Memory.RAM [localMemoryOffset + 2];
 				return (ushort)(callMethodOffset + 8);
 			} else {
 				return 0;
@@ -74,9 +75,9 @@ namespace HelloWorld.ComputerModel
 			ushort outputOffset){
 			Memory.RAM [Memory.stackTopOffset]++;
 			ushort localMemoryOffset = Memory.RAM [Memory.RAM [Memory.stackTopOffset]];
-			Memory.RAM [localMemoryOffset] = (byte) currentInstructionOffset;
-			Memory.RAM [localMemoryOffset] = Memory.RAM [inputOffset];
-			Memory.RAM [localMemoryOffset] = Memory.RAM [outputOffset];
+			Memory.RAM [localMemoryOffset++] = (byte) currentInstructionOffset;
+			Memory.RAM [localMemoryOffset++] = Memory.RAM [inputOffset];
+			Memory.RAM [localMemoryOffset++] = Memory.RAM [outputOffset];
 			return (ushort) startMethodOffset;
 		}
 
@@ -117,10 +118,10 @@ namespace HelloWorld.ComputerModel
 				(currentInstruction != (ushort)InstructionCode.StartMethod) &&
 				(currentInstruction != (ushort) InstructionCode.Jump))
 				arg1 = (byte)(arg1 + localMemoryOffset + 1);
-			if (currentInstruction == (ushort) InstructionCode.Jump)
-				arg1 += startMethodOffset;
-			if (currentInstruction == (ushort) InstructionCode.CallMethod)
-				arg1 += startMethodOffset;
+			//if (currentInstruction == (ushort) InstructionCode.Jump)
+			//	arg1 += startMethodOffset;
+			//if (currentInstruction == (ushort) InstructionCode.CallMethod)
+			//	arg1 += startMethodOffset;
 			
 			if ((currentInstruction != (ushort)InstructionCode.AssignUInt8Const) &&
 			    (currentInstruction != (ushort)InstructionCode.AddUInt8Const))

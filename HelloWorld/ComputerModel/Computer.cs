@@ -4,32 +4,19 @@ namespace HelloWorld.ComputerModel
 {
 	public class Computer
 	{
-		static public void Compile (ushort memorySize, byte[] instructions, ushort instructionsSize) {
+		static public void Compile () {
 			ushort currentOffset = 0;
-			Compiler.WriteInstruction (Memory.RAM, ref currentOffset, (ushort) InstructionCode.Jump, (ushort) 24, 0, 0);
+			Compiler.WriteInstruction (Memory.RAM, ref currentOffset, (ushort)InstructionCode.Jump, (ushort)24, 0, 0);
 			Memory.RAM [Memory.stackTopOffset] = 9;
-			Memory.RAM [Memory.stackOffset] = (byte) (Memory.instructionsOffset + instructionsSize);
-			Memory.RAM [Memory.stackOffset + 1] = (byte) (Memory.RAM [Memory.stackOffset] + memorySize);
-			for (int i = 0; i < instructionsSize; i++) {
-				Memory.RAM [Memory.instructionsOffset + i] = instructions [i];
-			};
 
-			/*
-			while (currentOffset < 250) {
-				ushort currentInstruction = BitConverter.ToUInt16 (Memory.RAM, currentOffset);
-				ushort arg1 = BitConverter.ToUInt16 (Memory.RAM, (currentOffset + 2));
-				ushort arg2 = BitConverter.ToUInt16 (Memory.RAM, (currentOffset + 4));
-				ushort arg3 = BitConverter.ToUInt16 (Memory.RAM, (currentOffset + 6));
-				Compiler.WriteBytesToArray (Memory.RAM, (ushort) (arg1 + 8), (ushort) (currentOffset + 2));
-				if ((currentInstruction != (ushort) InstructionCode.AssignUInt8Const) &&
-					(currentInstruction != (ushort) InstructionCode.AddUInt8Const))
-					Compiler.WriteBytesToArray (Memory.RAM, (ushort) (arg2 + 8), (ushort) (currentOffset + 4));
-				Compiler.WriteBytesToArray (Memory.RAM, (ushort) (arg3 + 8), (ushort) (currentOffset + 6));
-				if (currentInstruction == (ushort) InstructionCode.Jump)
-					Compiler.WriteBytesToArray (Memory.RAM, (ushort) (arg1 + 8 + memorySize), (ushort) (currentOffset + 2));
-				currentOffset += 8;
-			};*/
+			ushort instructionsSize = 256;
+			ushort memorySize = 0;
+			Compiler.WriteInstructionsTestFactorial (Memory.RAM, Memory.instructionsOffset, out memorySize, out instructionsSize);
+
+			Memory.RAM [Memory.stackOffset] = (byte)(Memory.instructionsOffset + instructionsSize);
+			Memory.RAM [Memory.stackOffset + 1] = (byte)(Memory.RAM [Memory.stackOffset] + memorySize);
 		}
+
 
 		static public void Start () {
 			//Написание программы
@@ -48,14 +35,7 @@ namespace HelloWorld.ComputerModel
 			}*/
 
 			//Компиляция
-
-			ushort instructionsLength = 256;
-			byte[] instructions = new byte[instructionsLength];
-			ushort memorySize = 0;
-			//Compiler.WriteInstructionsSugar(instructions, out memorySize);
-			//Compiler.WriteInstructionsOrderNumbers (instructions, out memorySize);
-			Compiler.WriteInstructionsTestFactorial (instructions, 0, out memorySize, out instructionsLength);
-			Compile (memorySize, instructions, instructionsLength);
+			Compile ();
 
 			//Выполнение
 			Processor.RunProgram ();
