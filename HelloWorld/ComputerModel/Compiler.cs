@@ -32,8 +32,7 @@ namespace HelloWorld.ComputerModel
 			offset = WriteBytesToArray (instructions, argument3, offset);
 		}
 
-		static public void CompileSugar (byte[] instructions, ushort startInstructionOffset, 
-			out ushort memorySize, out ushort instructionsSize) {
+		static public byte[] CompileSugar () {
 
 			/*
 			 static public void EnoughSugar () {
@@ -61,50 +60,37 @@ namespace HelloWorld.ComputerModel
 			ushort cupsInThermosOffset = currentOffset++;
 			ushort resultOffset = currentOffset++;
 
-			memorySize = currentOffset;
+			byte[] buffer = new byte[512];
+			ushort offset = 0;
 
-			ushort currentInstructionOffset = startInstructionOffset;
-			WriteInstruction (instructions, ref currentInstructionOffset, 
-				(ushort)InstructionCode.AssignUInt8Const, thermosVolumeOffset, 15, 0);
-			WriteInstruction (instructions, ref currentInstructionOffset, 
-				(ushort)InstructionCode.AssignUInt8Const, cupVolumeOffset, 3, 0);
-			WriteInstruction (instructions, ref currentInstructionOffset, 
-				(ushort)InstructionCode.AssignUInt8Const, pieceOfSugarMassOffset, 5, 0);
-			WriteInstruction (instructions, ref currentInstructionOffset, 
-				(ushort)InstructionCode.AssignUInt8Const, pieceOfSugarForCupOffset, 3, 0);
-			WriteInstruction (instructions, ref currentInstructionOffset, 
-				(ushort)InstructionCode.AssignUInt8Const, sugarMassAvailableOffset, 55, 0);
-			WriteInstruction (instructions, ref currentInstructionOffset, 
-				(ushort)InstructionCode.MultiplyUInt8, pieceOfSugarForCupOffset, pieceOfSugarMassOffset, sugarMassforCupOffset);
-			WriteInstruction (instructions, ref currentInstructionOffset, 
-				(ushort)InstructionCode.DivideUInt8, thermosVolumeOffset, cupVolumeOffset, cupsInThermosOffset);
-			WriteInstruction (instructions, ref currentInstructionOffset, 
-				(ushort)InstructionCode.MultiplyUInt8, sugarMassforCupOffset, cupsInThermosOffset, sugarMassRequiredOffset);
-			WriteInstruction (instructions, ref currentInstructionOffset, 
-				(ushort)InstructionCode.LessEqualUInt8, sugarMassRequiredOffset, sugarMassAvailableOffset, isEnoughSugarOffset);
-			WriteInstruction (instructions, ref currentInstructionOffset, 
-				(ushort)InstructionCode.SkipIfZero, isEnoughSugarOffset, 0, 0);
-			ushort ifNotZeroOffset = currentInstructionOffset;
-			WriteInstruction (instructions, ref currentInstructionOffset, 
-				(ushort)InstructionCode.Jump, 0, 0, 0);
-			WriteInstruction (instructions, ref currentInstructionOffset, 
-				(ushort)InstructionCode.AssignUInt8Const, resultOffset, 0, 0);
-			ushort ifZeroOffset = currentInstructionOffset;
-			WriteInstruction (instructions, ref currentInstructionOffset, 
-				(ushort)InstructionCode.Jump, 0, 0, 0);
-			ifNotZeroOffset = WriteBytesToArray (instructions, (ushort) currentInstructionOffset, (ushort) (ifNotZeroOffset + 2));
-			WriteInstruction (instructions, ref currentInstructionOffset, 
-				(ushort)InstructionCode.AssignUInt8Const, resultOffset, 1, 0);
-			ifZeroOffset = WriteBytesToArray (instructions, (ushort) currentInstructionOffset, (ushort) (ifZeroOffset + 2));
-			WriteInstruction (instructions, ref currentInstructionOffset, 
-				(ushort)InstructionCode.EndOfInstructions, 0, 0, 0);
+			WriteInstruction (buffer, ref offset, (ushort)InstructionCode.AssignUInt8Const, thermosVolumeOffset, 15, 0);
+			WriteInstruction (buffer, ref offset, (ushort)InstructionCode.AssignUInt8Const, cupVolumeOffset, 3, 0);
+			WriteInstruction (buffer, ref offset, (ushort)InstructionCode.AssignUInt8Const, pieceOfSugarMassOffset, 5, 0);
+			WriteInstruction (buffer, ref offset, (ushort)InstructionCode.AssignUInt8Const, pieceOfSugarForCupOffset, 3, 0);
+			WriteInstruction (buffer, ref offset, (ushort)InstructionCode.AssignUInt8Const, sugarMassAvailableOffset, 55, 0);
+			WriteInstruction (buffer, ref offset, (ushort)InstructionCode.MultiplyUInt8, pieceOfSugarForCupOffset, pieceOfSugarMassOffset, sugarMassforCupOffset);
+			WriteInstruction (buffer, ref offset, (ushort)InstructionCode.DivideUInt8, thermosVolumeOffset, cupVolumeOffset, cupsInThermosOffset);
+			WriteInstruction (buffer, ref offset, (ushort)InstructionCode.MultiplyUInt8, sugarMassforCupOffset, cupsInThermosOffset, sugarMassRequiredOffset);
+			WriteInstruction (buffer, ref offset, (ushort)InstructionCode.LessEqualUInt8, sugarMassRequiredOffset, sugarMassAvailableOffset, isEnoughSugarOffset);
+			WriteInstruction (buffer, ref offset, (ushort)InstructionCode.SkipIfZero, isEnoughSugarOffset, 0, 0);
+			ushort ifNotZeroOffset = offset;
+			WriteInstruction (buffer, ref offset, (ushort)InstructionCode.Jump, 0, 0, 0);
+			WriteInstruction (buffer, ref offset, (ushort)InstructionCode.AssignUInt8Const, resultOffset, 0, 0);
+			ushort ifZeroOffset = offset;
+			WriteInstruction (buffer, ref offset, (ushort)InstructionCode.Jump, 0, 0, 0);
+			ifNotZeroOffset = WriteBytesToArray (buffer, (ushort) offset, (ushort) (ifNotZeroOffset + 2));
+			WriteInstruction (buffer, ref offset, (ushort)InstructionCode.AssignUInt8Const, resultOffset, 1, 0);
+			ifZeroOffset = WriteBytesToArray (buffer, (ushort) offset, (ushort) (ifZeroOffset + 2));
+			WriteInstruction (buffer, ref offset, (ushort)InstructionCode.EndOfInstructions, 0, 0, 0);
 
-			instructionsSize = (ushort) (currentInstructionOffset - startInstructionOffset);
+			byte[] result = new byte[offset];
+			Buffer.BlockCopy (buffer, 0, result, 0, result.Length);
+
+			return result;
 		}
 
-		static public void CompileOrderNumbers (byte[] instructions, ushort startInstructionOffset, 
-			out ushort memorySize, out ushort instructionsSize) {
-			byte[] composeInstructions = new byte[] {
+		static public byte[] CompileOrderNumbers () {
+			byte[] result = new byte[] {
 				/* 0*/ 1, 0, 0, 0, 15, 0, 0, 0, // value1 = 15
 				/* 8*/ 1, 0, 1, 0, 70, 0, 0, 0, // value2 = 70
 				/*16*/ 5, 0, 0, 0, 1, 0, 4, 0, // ordered = (val1 <= val2)
@@ -117,49 +103,10 @@ namespace HelloWorld.ComputerModel
 				/*72*/ 2, 0, 3, 0, 1, 0, 0, 0, // max = value2
 				/*80*/ 0, 0, 0, 0, 0, 0, 0, 0 // End
 			};
-			for (int i = 0; i < 88; i++) {
-				instructions [i + startInstructionOffset] = composeInstructions [i];
-			};
-			memorySize = 5;
-			instructionsSize = 88;
+			return result;
 		}
 
-		static public void CompileFactorialCycle(byte[] instructions, ushort startInstructionOffset,
-			out ushort memorySize, out ushort instructionsSize) {
-			ushort currentOffset = 0;
-			ushort nOffset = currentOffset++;
-			ushort factorialOffset = currentOffset++;
-			ushort iOffset = currentOffset++;
-			ushort iLessEqualNOffset = currentOffset++;
-			memorySize = currentOffset;
-
-			ushort currentInstructionOffset = startInstructionOffset;
-
-			WriteInstruction (instructions, ref currentInstructionOffset, 
-				(ushort)InstructionCode.AssignUInt8Const, nOffset, 5, 0);
-			WriteInstruction (instructions, ref currentInstructionOffset, 
-				(ushort)InstructionCode.AssignUInt8Const, factorialOffset, 1, 0);
-			WriteInstruction (instructions, ref currentInstructionOffset, 
-				(ushort)InstructionCode.AssignUInt8Const, iOffset, 1, 0);
-			ushort cycleStart = currentInstructionOffset;
-			WriteInstruction (instructions, ref currentInstructionOffset, 
-				(ushort)InstructionCode.MultiplyUInt8, iOffset, factorialOffset, factorialOffset);
-			WriteInstruction (instructions, ref currentInstructionOffset, 
-				(ushort)InstructionCode.AddUInt8Const, iOffset, 1, iOffset);
-			WriteInstruction (instructions, ref currentInstructionOffset, 
-				(ushort)InstructionCode.LessEqualUInt8, iOffset, nOffset, iLessEqualNOffset);
-			WriteInstruction (instructions, ref currentInstructionOffset, 
-				(ushort)InstructionCode.SkipIfZero, iLessEqualNOffset, 0, 0);
-			WriteInstruction (instructions, ref currentInstructionOffset, 
-				(ushort)InstructionCode.Jump, cycleStart, 0, 0);
-			WriteInstruction (instructions, ref currentInstructionOffset, 
-				(ushort)InstructionCode.EndOfInstructions, 0, 0, 0);
-
-			instructionsSize = (ushort) (currentInstructionOffset - startInstructionOffset);
-		}
-
-		static public void CompileTestFactorial(byte[] instructions, ushort startInstructionOffset,
-			out ushort memorySize, out ushort instructionsSize) {
+		static public byte[] CompileTestFactorial() {
 			ushort currentOffset = 0;
 			ushort nOffset = currentOffset++;
 			ushort resultsEqualOffset = currentOffset++;
@@ -167,101 +114,31 @@ namespace HelloWorld.ComputerModel
 			ushort factorialRecursiveOffset = currentOffset++;
 			ushort iOffset = currentOffset++;
 			ushort iLessEqualNOffset = currentOffset++;
-			memorySize = currentOffset;
 
-			ushort currentInstructionOffset = startInstructionOffset;
+			byte[] buffer = new byte[512];
+			ushort offset = 0;
 
-			WriteInstruction (instructions, ref currentInstructionOffset, 
-				(ushort)InstructionCode.AssignUInt8Const, nOffset, 5, 0);
-			
-			ushort factorialCycleCall = currentInstructionOffset;
-			WriteInstruction (instructions, ref currentInstructionOffset, 
-				(ushort)InstructionCode.CallMethod, (ushort) (currentInstructionOffset + 8), nOffset, factorialCycleOffset);
+			WriteInstruction (buffer, ref offset, (ushort)InstructionCode.AssignUInt8Const, nOffset, 5, 0);
+			ushort factorialCycleCall = offset;
+			WriteInstruction (buffer, ref offset, (ushort)InstructionCode.CallMethod, (ushort) (offset + 8), nOffset, factorialCycleOffset);
+			WriteInstruction (buffer, ref offset, (ushort)InstructionCode.AreEqualUInt8, factorialCycleOffset, factorialRecursiveOffset, resultsEqualOffset);
+			WriteInstruction (buffer, ref offset, (ushort)InstructionCode.EndOfInstructions, 0, 0, 0);
+			ushort unused = WriteBytesToArray (buffer, offset, (ushort) (factorialCycleCall + 2));
+			WriteInstruction (buffer, ref offset, (ushort)InstructionCode.AssignUInt8Const, nOffset, 5, 0);
+			WriteInstruction (buffer, ref offset, (ushort)InstructionCode.AssignUInt8Const, factorialCycleOffset, 1, 0);
+			WriteInstruction (buffer, ref offset, (ushort)InstructionCode.AssignUInt8Const, iOffset, 1, 0);
+			ushort cycleStart = offset;
+			WriteInstruction (buffer, ref offset, (ushort)InstructionCode.MultiplyUInt8, iOffset, factorialCycleOffset, factorialCycleOffset);
+			WriteInstruction (buffer, ref offset, (ushort)InstructionCode.AddUInt8Const, iOffset, 1, iOffset);
+			WriteInstruction (buffer, ref offset, (ushort)InstructionCode.LessEqualUInt8, iOffset, nOffset, iLessEqualNOffset);
+			WriteInstruction (buffer, ref offset, (ushort)InstructionCode.SkipIfZero, iLessEqualNOffset, 0, 0);
+			WriteInstruction (buffer, ref offset, (ushort)InstructionCode.Jump, cycleStart, 0, 0);
+			WriteInstruction (buffer, ref offset, (ushort)InstructionCode.EndOfInstructions, factorialCycleCall, 0, 0);
 
-			WriteInstruction (instructions, ref currentInstructionOffset, 
-				(ushort)InstructionCode.AreEqualUInt8, factorialCycleOffset, factorialRecursiveOffset, resultsEqualOffset);
-			WriteInstruction (instructions, ref currentInstructionOffset, 
-				(ushort)InstructionCode.EndOfInstructions, 0, 0, 0);
+			byte[] result = new byte[offset];
+			Buffer.BlockCopy (buffer, 0, result, 0, result.Length);
 
-			ushort unused = WriteBytesToArray (instructions, (ushort) (currentInstructionOffset - startInstructionOffset), (ushort) (factorialCycleCall + 2));
-			WriteInstruction (instructions, ref currentInstructionOffset, 
-				(ushort)InstructionCode.AssignUInt8Const, nOffset, 5, 0);
-			WriteInstruction (instructions, ref currentInstructionOffset, 
-				(ushort)InstructionCode.AssignUInt8Const, factorialCycleOffset, 1, 0);
-			WriteInstruction (instructions, ref currentInstructionOffset, 
-				(ushort)InstructionCode.AssignUInt8Const, iOffset, 1, 0);
-			ushort cycleStart = (ushort) (currentInstructionOffset - startInstructionOffset);
-			WriteInstruction (instructions, ref currentInstructionOffset, 
-				(ushort)InstructionCode.MultiplyUInt8, iOffset, factorialCycleOffset, factorialCycleOffset);
-			WriteInstruction (instructions, ref currentInstructionOffset, 
-				(ushort)InstructionCode.AddUInt8Const, iOffset, 1, iOffset);
-			WriteInstruction (instructions, ref currentInstructionOffset, 
-				(ushort)InstructionCode.LessEqualUInt8, iOffset, nOffset, iLessEqualNOffset);
-			WriteInstruction (instructions, ref currentInstructionOffset, 
-				(ushort)InstructionCode.SkipIfZero, iLessEqualNOffset, 0, 0);
-			WriteInstruction (instructions, ref currentInstructionOffset, 
-				(ushort)InstructionCode.Jump, cycleStart, 0, 0);
-			WriteInstruction (instructions, ref currentInstructionOffset, 
-				(ushort)InstructionCode.EndOfInstructions, (ushort) (factorialCycleCall - startInstructionOffset), 0, 0);
-			
-			instructionsSize = (ushort) (currentInstructionOffset - startInstructionOffset);
-		}
-
-		static public void Compile () {
-			ushort currentOffset = 0;
-			ushort instructionsSize = 256;
-			ushort memorySize = 0;
-
-			ushort TestFactorialOffset = currentOffset;
-			currentOffset += 2;
-			Compiler.CompileTestFactorial (Memory.HDD, currentOffset, out memorySize, out instructionsSize);
-			currentOffset = WriteBytesToArray (Memory.HDD, instructionsSize, TestFactorialOffset);
-			currentOffset += instructionsSize;
-
-			ushort FactorialCycleOffset = currentOffset;
-			currentOffset += 2;
-			Compiler.CompileFactorialCycle (Memory.HDD, currentOffset, out memorySize, out instructionsSize);
-			currentOffset = WriteBytesToArray (Memory.HDD, instructionsSize, FactorialCycleOffset);
-			currentOffset += instructionsSize;
-
-			ushort OrderNumbersOffset = currentOffset;
-			currentOffset += 2;
-			Compiler.CompileOrderNumbers (Memory.HDD, currentOffset, out memorySize, out instructionsSize);
-			currentOffset = WriteBytesToArray (Memory.HDD, instructionsSize, OrderNumbersOffset);
-			currentOffset += instructionsSize;
-
-			ushort SugarOffset = currentOffset;
-			currentOffset += 2;
-			Compiler.CompileSugar (Memory.HDD, currentOffset, out memorySize, out instructionsSize);
-			currentOffset = WriteBytesToArray (Memory.HDD, instructionsSize, SugarOffset);
-			currentOffset += instructionsSize;
-
-
-			ushort currentMethodOffset = TestFactorialOffset;
-			instructionsSize = BitConverter.ToUInt16 (Memory.HDD, currentMethodOffset);
-			currentMethodOffset += 2;
-			for (int i = 0; i < instructionsSize; i++) {
-				Memory.RAM [i] = Memory.HDD [i + currentMethodOffset];
-			};
-
-			ushort memoryStart = instructionsSize;
-
-			currentOffset = 0;
-			while (currentOffset < instructionsSize) {
-				ushort currentInstruction = BitConverter.ToUInt16 (Memory.RAM, currentOffset);
-				ushort arg1 = BitConverter.ToUInt16 (Memory.RAM, (currentOffset + 2));
-				ushort arg2 = BitConverter.ToUInt16 (Memory.RAM, (currentOffset + 4));
-				ushort arg3 = BitConverter.ToUInt16 (Memory.RAM, (currentOffset + 6));
-				if ((currentInstruction != (ushort) InstructionCode.Jump) &&
-					(currentInstruction != (ushort) InstructionCode.CallMethod) &&
-					(currentInstruction != (ushort) InstructionCode.EndOfInstructions))
-				Compiler.WriteBytesToArray (Memory.RAM, (ushort) (arg1 + memoryStart), (ushort) (currentOffset + 2));
-				if ((currentInstruction != (ushort) InstructionCode.AssignUInt8Const) &&
-					(currentInstruction != (ushort) InstructionCode.AddUInt8Const))
-					Compiler.WriteBytesToArray (Memory.RAM, (ushort) (arg2 + memoryStart), (ushort) (currentOffset + 4));
-				Compiler.WriteBytesToArray (Memory.RAM, (ushort) (arg3 + memoryStart), (ushort) (currentOffset + 6));
-				currentOffset += 8;
-			};
+			return result;
 		}
 	}
 }

@@ -6,6 +6,8 @@ namespace HelloWorld.ComputerModel
 	{
 		static public byte[] RAM = new byte[256];
 		static public byte[] HDD = new byte[1024];
+		static public int HDDContentLength = 0;
+		static public ushort localMemoryOffset = 0;
 	}
 }
 

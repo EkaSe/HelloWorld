@@ -8,26 +8,38 @@ namespace HelloWorld.ComputerModel
 			new Func<ushort, ushort, ushort, ushort, ushort>[12]; 
 
 		static public ushort AssignUInt8Const (ushort instructionOffset, ushort offset, ushort value, ushort unused) {
+			offset += Memory.localMemoryOffset;
 			Memory.RAM [offset] = BitConverter.GetBytes (value) [0];
 			return (ushort) (instructionOffset + 8);
 		}
 
 		static public ushort AssignUInt8Var (ushort instructionOffset, ushort destinationOffset, ushort sourceOffset, ushort unused) {
+			destinationOffset += Memory.localMemoryOffset;
+			sourceOffset += Memory.localMemoryOffset;
 			Memory.RAM [destinationOffset] = Memory.RAM [sourceOffset];
 			return (ushort) (instructionOffset + 8);
 		}
 
 		static public ushort MultiplyUInt8 (ushort instructionOffset, ushort bOffset, ushort cOffset, ushort aOffset) {
+			aOffset += Memory.localMemoryOffset;
+			bOffset += Memory.localMemoryOffset;
+			cOffset += Memory.localMemoryOffset;
 			Memory.RAM [aOffset] = (byte) (Memory.RAM [bOffset] * Memory.RAM [cOffset]);
 			return (ushort) (instructionOffset + 8);
 		}
 
 		static public ushort DivideUInt8 (ushort instructionOffset, ushort bOffset, ushort cOffset, ushort aOffset) { 
+			aOffset += Memory.localMemoryOffset;
+			bOffset += Memory.localMemoryOffset;
+			cOffset += Memory.localMemoryOffset;
 			Memory.RAM [aOffset] = (byte) (Memory.RAM [bOffset] / Memory.RAM [cOffset]);
 			return (ushort) (instructionOffset + 8);
 		}
 
 		static public ushort LessEqualUInt8 (ushort instructionOffset, ushort bOffset, ushort cOffset, ushort resultOffset) { 
+			resultOffset += Memory.localMemoryOffset;
+			bOffset += Memory.localMemoryOffset;
+			cOffset += Memory.localMemoryOffset;
 			if (Memory.RAM [bOffset] <= Memory.RAM [cOffset])
 				Memory.RAM [resultOffset] = 1;
 			else
@@ -36,6 +48,7 @@ namespace HelloWorld.ComputerModel
 		}
 
 		static public ushort SkipIfZero (ushort instructionOffset, ushort valueOffset, ushort unused1, ushort unused2) {
+			valueOffset += Memory.localMemoryOffset;
 			if (Memory.RAM [valueOffset] == 0)
 				return (ushort) (instructionOffset + 16);
 			else
@@ -54,6 +67,8 @@ namespace HelloWorld.ComputerModel
 		}
 
 		static public ushort AddUInt8Const (ushort instructionOffset, ushort varOffset, ushort constValue, ushort sumOffset) {
+			varOffset += Memory.localMemoryOffset;
+			sumOffset += Memory.localMemoryOffset;
 			Memory.RAM [sumOffset] = (byte) (Memory.RAM [varOffset] + BitConverter.GetBytes (constValue) [0]);
 			return (ushort) (instructionOffset + 8);
 		}
@@ -64,6 +79,9 @@ namespace HelloWorld.ComputerModel
 		}
 
 		static public ushort AreEqualUInt8 (ushort instructionOffset, ushort bOffset, ushort cOffset, ushort resultOffset) { 
+			resultOffset += Memory.localMemoryOffset;
+			bOffset += Memory.localMemoryOffset;
+			cOffset += Memory.localMemoryOffset;
 			if (Memory.RAM [bOffset] == Memory.RAM [cOffset])
 				Memory.RAM [resultOffset] = 1;
 			else
