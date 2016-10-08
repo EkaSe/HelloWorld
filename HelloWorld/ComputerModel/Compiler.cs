@@ -13,7 +13,9 @@ namespace HelloWorld.ComputerModel
 		Jump,
 		AddUInt8Const,
 		CallMethod,
-		AreEqualUInt8
+		AreEqualUInt8,
+		Return,
+		InitStack
 	};
 
 	public class Compiler
@@ -48,20 +50,24 @@ namespace HelloWorld.ComputerModel
 				else result = 0;
 			}*/
 
-			ushort currentOffset = 0;
-			ushort thermosVolumeOffset = currentOffset++;
-			ushort cupVolumeOffset = currentOffset++;
-			ushort pieceOfSugarMassOffset = currentOffset++;
-			ushort pieceOfSugarForCupOffset = currentOffset++;
-			ushort sugarMassAvailableOffset = currentOffset++;
-			ushort sugarMassRequiredOffset = currentOffset++;
-			ushort isEnoughSugarOffset = currentOffset++;
-			ushort sugarMassforCupOffset = currentOffset++;
-			ushort cupsInThermosOffset = currentOffset++;
-			ushort resultOffset = currentOffset++;
+			ushort offset = 8;
+			ushort stackTopOffset = offset++;
+			ushort thermosVolumeOffset = offset++;
+			ushort cupVolumeOffset = offset++;
+			ushort pieceOfSugarMassOffset = offset++;
+			ushort pieceOfSugarForCupOffset = offset++;
+			ushort sugarMassAvailableOffset = offset++;
+			ushort sugarMassRequiredOffset = offset++;
+			ushort isEnoughSugarOffset = offset++;
+			ushort sugarMassforCupOffset = offset++;
+			ushort cupsInThermosOffset = offset++;
+			ushort resultOffset = offset++;
 
 			byte[] buffer = new byte[512];
-			ushort offset = 0;
+			ushort memorySize = (ushort) (offset - 8);
+			offset = 0;
+			WriteInstruction (buffer, ref offset, (ushort)InstructionCode.Jump, (ushort) (8 + memorySize), 0, 0);
+			offset += memorySize;
 
 			WriteInstruction (buffer, ref offset, (ushort)InstructionCode.AssignUInt8Const, thermosVolumeOffset, 15, 0);
 			WriteInstruction (buffer, ref offset, (ushort)InstructionCode.AssignUInt8Const, cupVolumeOffset, 3, 0);
@@ -91,39 +97,56 @@ namespace HelloWorld.ComputerModel
 
 		static public byte[] CompileOrderNumbers () {
 			byte[] result = new byte[] {
-				/* 0*/ 1, 0, 0, 0, 15, 0, 0, 0, // value1 = 15
-				/* 8*/ 1, 0, 1, 0, 70, 0, 0, 0, // value2 = 70
-				/*16*/ 5, 0, 0, 0, 1, 0, 4, 0, // ordered = (val1 <= val2)
-				/*24*/ 6, 0, 4, 0, 0, 0, 0, 0, // skipIfZero (ordered)
-				/*32*/ 7, 0, 64, 0, 0, 0, 0, 0, // jump (64)
-				/*40*/ 2, 0, 2, 0, 1, 0, 0, 0, // min = value2
-				/*48*/ 2, 0, 3, 0, 0, 0, 0, 0, // max = value1
-				/*56*/ 7, 0, 80, 0, 0, 0, 0, 0, // jump (80)
-				/*64*/ 2, 0, 2, 0, 0, 0, 0, 0, // min = value1
-				/*72*/ 2, 0, 3, 0, 1, 0, 0, 0, // max = value2
-				/*80*/ 0, 0, 0, 0, 0, 0, 0, 0 // End
+				/* 0*/ 7, 0, 13, 0, 0, 0, 0, 0, // jump (64)
+				/* 8*/ 1, 0, 0, 0, 0, 0,// stackTop, val1, val2, ordered, min, max
+				/*14*/ 1, 0, 0, 0, 15, 0, 0, 0, // value1 = 15
+				/*22*/ 1, 0, 1, 0, 70, 0, 0, 0, // value2 = 70
+				/*30*/ 5, 0, 0, 0, 1, 0, 4, 0, // ordered = (val1 <= val2)
+				/*39*/ 6, 0, 4, 0, 0, 0, 0, 0, // skipIfZero (ordered)
+				/*46*/ 7, 0, 78, 0, 0, 0, 0, 0, // jump (78)
+				/*54*/ 2, 0, 2, 0, 1, 0, 0, 0, // min = value2
+				/*62*/ 2, 0, 3, 0, 0, 0, 0, 0, // max = value1
+				/*70*/ 7, 0, 94, 0, 0, 0, 0, 0, // jump (94)
+				/*78*/ 2, 0, 2, 0, 0, 0, 0, 0, // min = value1
+				/*86*/ 2, 0, 3, 0, 1, 0, 0, 0, // max = value2
+				/*94*/ 0, 0, 0, 0, 0, 0, 0, 0 // End
 			};
 			return result;
 		}
 
 		static public byte[] CompileTestFactorial() {
-			ushort currentOffset = 0;
-			ushort nOffset = currentOffset++;
-			ushort resultsEqualOffset = currentOffset++;
-			ushort factorialCycleOffset = currentOffset++;
-			ushort factorialRecursiveOffset = currentOffset++;
-			ushort iOffset = currentOffset++;
-			ushort iLessEqualNOffset = currentOffset++;
+			ushort offset = 8;
+			ushort stackTopOffset = offset++;
+			ushort offset0 = 0;
+			ushort stack0Offset = offset0++; //offset relatively to stackTopOffset; offset of return point
+			ushort stack1Offset = offset0; //offset relatively to stackTopOffset
+			offset = 16;
+
+			ushort nOffset = offset++; //relatively to current stack0offset - local memory start
+			ushort resultsEqualOffset = offset++;
+			ushort factorialCycleOffset = offset++;
+			ushort factorialRecursiveOffset = offset++;
+			ushort iOffset = offset++;
+			ushort iLessEqualNOffset = offset++;
+
 
 			byte[] buffer = new byte[512];
-			ushort offset = 0;
+			offset0 = 0;
+			WriteInstruction (buffer, ref offset0, (ushort)InstructionCode.Jump, offset, 0, 0);
 
+			WriteInstruction (buffer, ref offset, (ushort)InstructionCode.InitStack, stackTopOffset, 0, 0);
+			WriteInstruction (buffer, ref offset, (ushort)InstructionCode.AssignUInt8Const, stackTopOffset, stack0Offset, 0);
 			WriteInstruction (buffer, ref offset, (ushort)InstructionCode.AssignUInt8Const, nOffset, 5, 0);
+			WriteInstruction (buffer, ref offset, (ushort)InstructionCode.AssignUInt8Const, stackTopOffset, stack1Offset, 0);
+			WriteInstruction (buffer, ref offset, (ushort)InstructionCode.AssignUInt8Const, (ushort) (stackTopOffset + stack1Offset + 1), 
+				(ushort) (offset + 24), 0);
 			ushort factorialCycleCall = offset;
-			WriteInstruction (buffer, ref offset, (ushort)InstructionCode.CallMethod, (ushort) (offset + 8), nOffset, factorialCycleOffset);
+			WriteInstruction (buffer, ref offset, (ushort)InstructionCode.CallMethod, (ushort) (offset + 8), 0, 0);
+			WriteInstruction (buffer, ref offset, (ushort)InstructionCode.AssignUInt8Const, stackTopOffset, stack0Offset, 0);
 			WriteInstruction (buffer, ref offset, (ushort)InstructionCode.AreEqualUInt8, factorialCycleOffset, factorialRecursiveOffset, resultsEqualOffset);
 			WriteInstruction (buffer, ref offset, (ushort)InstructionCode.EndOfInstructions, 0, 0, 0);
-			ushort unused = WriteBytesToArray (buffer, offset, (ushort) (factorialCycleCall + 2));
+
+			offset0 = WriteBytesToArray (buffer, offset, (ushort) (factorialCycleCall + 2));
 			WriteInstruction (buffer, ref offset, (ushort)InstructionCode.AssignUInt8Const, nOffset, 5, 0);
 			WriteInstruction (buffer, ref offset, (ushort)InstructionCode.AssignUInt8Const, factorialCycleOffset, 1, 0);
 			WriteInstruction (buffer, ref offset, (ushort)InstructionCode.AssignUInt8Const, iOffset, 1, 0);
@@ -133,7 +156,7 @@ namespace HelloWorld.ComputerModel
 			WriteInstruction (buffer, ref offset, (ushort)InstructionCode.LessEqualUInt8, iOffset, nOffset, iLessEqualNOffset);
 			WriteInstruction (buffer, ref offset, (ushort)InstructionCode.SkipIfZero, iLessEqualNOffset, 0, 0);
 			WriteInstruction (buffer, ref offset, (ushort)InstructionCode.Jump, cycleStart, 0, 0);
-			WriteInstruction (buffer, ref offset, (ushort)InstructionCode.EndOfInstructions, factorialCycleCall, 0, 0);
+			WriteInstruction (buffer, ref offset, (ushort)InstructionCode.Return, 0, 0, 0);
 
 			byte[] result = new byte[offset];
 			Buffer.BlockCopy (buffer, 0, result, 0, result.Length);

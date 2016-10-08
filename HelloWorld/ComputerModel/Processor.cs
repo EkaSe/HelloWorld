@@ -4,42 +4,32 @@ namespace HelloWorld.ComputerModel
 {
 	public class Processor
 	{
+		static int stackTopOffset;
+
 		static public Func<ushort, ushort, ushort, ushort, ushort>[] instructionsList = 
-			new Func<ushort, ushort, ushort, ushort, ushort>[12]; 
+			new Func<ushort, ushort, ushort, ushort, ushort>[13]; 
 
 		static public ushort AssignUInt8Const (ushort instructionOffset, ushort offset, ushort value, ushort unused) {
-			offset += Memory.localMemoryOffset;
 			Memory.RAM [offset] = BitConverter.GetBytes (value) [0];
 			return (ushort) (instructionOffset + 8);
 		}
 
 		static public ushort AssignUInt8Var (ushort instructionOffset, ushort destinationOffset, ushort sourceOffset, ushort unused) {
-			destinationOffset += Memory.localMemoryOffset;
-			sourceOffset += Memory.localMemoryOffset;
 			Memory.RAM [destinationOffset] = Memory.RAM [sourceOffset];
 			return (ushort) (instructionOffset + 8);
 		}
 
 		static public ushort MultiplyUInt8 (ushort instructionOffset, ushort bOffset, ushort cOffset, ushort aOffset) {
-			aOffset += Memory.localMemoryOffset;
-			bOffset += Memory.localMemoryOffset;
-			cOffset += Memory.localMemoryOffset;
-			Memory.RAM [aOffset] = (byte) (Memory.RAM [bOffset] * Memory.RAM [cOffset]);
+			Memory.RAM [aOffset] = (byte) (Memory.RAM [bOffset ] * Memory.RAM [cOffset]);
 			return (ushort) (instructionOffset + 8);
 		}
 
 		static public ushort DivideUInt8 (ushort instructionOffset, ushort bOffset, ushort cOffset, ushort aOffset) { 
-			aOffset += Memory.localMemoryOffset;
-			bOffset += Memory.localMemoryOffset;
-			cOffset += Memory.localMemoryOffset;
 			Memory.RAM [aOffset] = (byte) (Memory.RAM [bOffset] / Memory.RAM [cOffset]);
 			return (ushort) (instructionOffset + 8);
 		}
 
 		static public ushort LessEqualUInt8 (ushort instructionOffset, ushort bOffset, ushort cOffset, ushort resultOffset) { 
-			resultOffset += Memory.localMemoryOffset;
-			bOffset += Memory.localMemoryOffset;
-			cOffset += Memory.localMemoryOffset;
 			if (Memory.RAM [bOffset] <= Memory.RAM [cOffset])
 				Memory.RAM [resultOffset] = 1;
 			else
@@ -48,7 +38,6 @@ namespace HelloWorld.ComputerModel
 		}
 
 		static public ushort SkipIfZero (ushort instructionOffset, ushort valueOffset, ushort unused1, ushort unused2) {
-			valueOffset += Memory.localMemoryOffset;
 			if (Memory.RAM [valueOffset] == 0)
 				return (ushort) (instructionOffset + 16);
 			else
@@ -59,29 +48,20 @@ namespace HelloWorld.ComputerModel
 			return (ushort) instructionOffset;
 		}
 
-		static public ushort EndOfInstructions (ushort currentInstructionOffset, ushort returnOffset, ushort unused2, ushort unused3) {
-			if (returnOffset == 0)
-				return returnOffset;
-			else
-				return (ushort)(returnOffset + 8);
+		static public ushort EndOfInstructions (ushort currentInstructionOffset, ushort unused1, ushort unused2, ushort unused3) {
+			return 0;
 		}
 
 		static public ushort AddUInt8Const (ushort instructionOffset, ushort varOffset, ushort constValue, ushort sumOffset) {
-			varOffset += Memory.localMemoryOffset;
-			sumOffset += Memory.localMemoryOffset;
 			Memory.RAM [sumOffset] = (byte) (Memory.RAM [varOffset] + BitConverter.GetBytes (constValue) [0]);
 			return (ushort) (instructionOffset + 8);
 		}
 
-		static public ushort CallMethod (ushort currentInstructionOffset, ushort startMethodOffset, ushort inputOffset, 
-			ushort outputOffset){
+		static public ushort CallMethod (ushort currentOffset, ushort startMethodOffset, ushort inputOffset, ushort localInputOffset){
 			return (ushort) startMethodOffset;
 		}
 
 		static public ushort AreEqualUInt8 (ushort instructionOffset, ushort bOffset, ushort cOffset, ushort resultOffset) { 
-			resultOffset += Memory.localMemoryOffset;
-			bOffset += Memory.localMemoryOffset;
-			cOffset += Memory.localMemoryOffset;
 			if (Memory.RAM [bOffset] == Memory.RAM [cOffset])
 				Memory.RAM [resultOffset] = 1;
 			else
@@ -89,24 +69,36 @@ namespace HelloWorld.ComputerModel
 			return (ushort) (instructionOffset + 8);
 		}
 
+		static public ushort Return (ushort currentOffset, ushort unused1, ushort unused2, ushort unused3) {
+			ushort currentStackOffset = (ushort) (stackTopOffset + Memory.RAM [stackTopOffset] + 1);
+			return (ushort) Memory.RAM [currentStackOffset];
+		}
+
+		static public ushort InitStack (ushort currentOffset, ushort programStackTopOffset, ushort unused1, ushort unused2){
+			stackTopOffset = programStackTopOffset;
+			return (ushort) (currentOffset + 8);
+		}
+
 		static public ushort ProcessInstruction (ushort currentInstructionOffset, ref ushort startMethodOffset){
-			instructionsList [(int)InstructionCode.EndOfInstructions] = EndOfInstructions;
-			instructionsList [(int)InstructionCode.AssignUInt8Const] = AssignUInt8Const;
-			instructionsList [(int)InstructionCode.AssignUInt8Var] = AssignUInt8Var; 
-			instructionsList [(int)InstructionCode.MultiplyUInt8] = MultiplyUInt8; 
-			instructionsList [(int)InstructionCode.DivideUInt8] = DivideUInt8;
-			instructionsList [(int)InstructionCode.LessEqualUInt8] = LessEqualUInt8; 
-			instructionsList [(int)InstructionCode.SkipIfZero] = SkipIfZero; 
-			instructionsList [(int)InstructionCode.Jump] = Jump;
-			instructionsList [(int)InstructionCode.AddUInt8Const] = AddUInt8Const;
-			instructionsList [(int)InstructionCode.CallMethod] = CallMethod;
-			instructionsList [(int)InstructionCode.AreEqualUInt8] = AreEqualUInt8;
+			/* 0*/ instructionsList [(int)InstructionCode.EndOfInstructions] = EndOfInstructions;
+			/* 1*/ instructionsList [(int)InstructionCode.AssignUInt8Const] = AssignUInt8Const;
+			/* 2*/ instructionsList [(int)InstructionCode.AssignUInt8Var] = AssignUInt8Var; 
+			/* 3*/ instructionsList [(int)InstructionCode.MultiplyUInt8] = MultiplyUInt8; 
+			/* 4*/ instructionsList [(int)InstructionCode.DivideUInt8] = DivideUInt8;
+			/* 5*/ instructionsList [(int)InstructionCode.LessEqualUInt8] = LessEqualUInt8; 
+			/* 6*/ instructionsList [(int)InstructionCode.SkipIfZero] = SkipIfZero; 
+			/* 7*/ instructionsList [(int)InstructionCode.Jump] = Jump;
+			/* 8*/ instructionsList [(int)InstructionCode.AddUInt8Const] = AddUInt8Const;
+			/* 9*/ instructionsList [(int)InstructionCode.CallMethod] = CallMethod;
+			/*10*/ instructionsList [(int)InstructionCode.AreEqualUInt8] = AreEqualUInt8;
+			/*11*/ instructionsList [(int)InstructionCode.Return] = Return;
+			/*12*/ instructionsList [(int)InstructionCode.InitStack] = InitStack;
 
 			ushort currentInstruction = BitConverter.ToUInt16 (Memory.RAM, currentInstructionOffset);
 			ushort arg1 = BitConverter.ToUInt16 (Memory.RAM, (currentInstructionOffset + 2));
 			ushort arg2 = BitConverter.ToUInt16 (Memory.RAM, (currentInstructionOffset + 4));
 			ushort arg3 = BitConverter.ToUInt16 (Memory.RAM, (currentInstructionOffset + 6));
-			if (currentInstruction >= 11) {
+			if (currentInstruction >= 13) {
 				throw new Exception ("Invalid instruction code");
 			};
 
