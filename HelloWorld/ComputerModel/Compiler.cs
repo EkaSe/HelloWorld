@@ -64,22 +64,22 @@ namespace HelloWorld.ComputerModel
 
 			byte[] buffer = new byte[512];
 
-			WriteInstruction (buffer,   0, InstructionCode.Jump,				24,							0,							0);
-			WriteInstruction (buffer,  24, InstructionCode.AssignUInt8Const,	thermosVolumeAddress,		15,							0);
-			WriteInstruction (buffer,  32, InstructionCode.AssignUInt8Const,	cupVolumeAddress,			3,							0);
-			WriteInstruction (buffer,  40, InstructionCode.AssignUInt8Const,	pieceOfSugarMassAddress,	5,							0);
-			WriteInstruction (buffer,  48, InstructionCode.AssignUInt8Const,	pieceOfSugarForCupAddress,	3,							0);
-			WriteInstruction (buffer,  56, InstructionCode.AssignUInt8Const,	sugarMassAvailableAddress,	55,							0);
-			WriteInstruction (buffer,  64, InstructionCode.MultiplyUInt8,		pieceOfSugarForCupAddress,	pieceOfSugarMassAddress,	sugarMassforCupAddress);
-			WriteInstruction (buffer,  72, InstructionCode.DivideUInt8,			thermosVolumeAddress,		cupVolumeAddress,			cupsInThermosAddress);
-			WriteInstruction (buffer,  80, InstructionCode.MultiplyUInt8,		sugarMassforCupAddress,		cupsInThermosAddress,		sugarMassRequiredAddress);
-			WriteInstruction (buffer,  88, InstructionCode.LessEqualUInt8,		sugarMassRequiredAddress,	sugarMassAvailableAddress,	isEnoughSugarAddress);
-			WriteInstruction (buffer,  96, InstructionCode.SkipIfZero,			isEnoughSugarAddress,		0,							0);
-			WriteInstruction (buffer, 104, InstructionCode.Jump,				128,						0,							0);
-			WriteInstruction (buffer, 112, InstructionCode.AssignUInt8Const,	resultAddress,				0,							0);
-			WriteInstruction (buffer, 120, InstructionCode.Jump,				136,						0,							0);
-			WriteInstruction (buffer, 128, InstructionCode.AssignUInt8Const,	resultAddress,				1,							0);
-			WriteInstruction (buffer, 136, InstructionCode.EndOfInstructions,	0,							0,							0);
+			WriteInstruction (buffer, 0,	InstructionCode.Jump,				24,							0,							0);
+			WriteInstruction (buffer, 24,	InstructionCode.AssignUInt8Const,	thermosVolumeAddress,		15,							0);
+			WriteInstruction (buffer, 32,	InstructionCode.AssignUInt8Const,	cupVolumeAddress,			3,							0);
+			WriteInstruction (buffer, 40,	InstructionCode.AssignUInt8Const,	pieceOfSugarMassAddress,	5,							0);
+			WriteInstruction (buffer, 48,	InstructionCode.AssignUInt8Const,	pieceOfSugarForCupAddress,	3,							0);
+			WriteInstruction (buffer, 56,	InstructionCode.AssignUInt8Const,	sugarMassAvailableAddress,	55,							0);
+			WriteInstruction (buffer, 64,	InstructionCode.MultiplyUInt8,		pieceOfSugarForCupAddress,	pieceOfSugarMassAddress,	sugarMassforCupAddress);
+			WriteInstruction (buffer, 72,	InstructionCode.DivideUInt8,		thermosVolumeAddress,		cupVolumeAddress,			cupsInThermosAddress);
+			WriteInstruction (buffer, 80,	InstructionCode.MultiplyUInt8,		sugarMassforCupAddress,		cupsInThermosAddress,		sugarMassRequiredAddress);
+			WriteInstruction (buffer, 88,	InstructionCode.LessEqualUInt8,		sugarMassRequiredAddress,	sugarMassAvailableAddress,	isEnoughSugarAddress);
+			WriteInstruction (buffer, 96,	InstructionCode.SkipIfZero,			isEnoughSugarAddress,		0,							0);
+			WriteInstruction (buffer, 104,	InstructionCode.Jump,				128,						0,							0);
+			WriteInstruction (buffer, 112,	InstructionCode.AssignUInt8Const,	resultAddress,				0,							0);
+			WriteInstruction (buffer, 120,	InstructionCode.Jump,				136,						0,							0);
+			WriteInstruction (buffer, 128,	InstructionCode.AssignUInt8Const,	resultAddress,				1,							0);
+			WriteInstruction (buffer, 136,	InstructionCode.EndOfInstructions,	0,							0,							0);
 
 			byte[] result = new byte[144];
 			Buffer.BlockCopy (buffer, 0, result, 0, result.Length);
@@ -120,25 +120,25 @@ namespace HelloWorld.ComputerModel
 
 			byte[] buffer = new byte[512];
 
-			WriteInstruction (buffer,   0, InstructionCode.Jump,				24,						0,							0);
-			WriteInstruction (buffer,  24, InstructionCode.InitStack,			stackTopAddress,		0,							0);
-			WriteInstruction (buffer,  32, InstructionCode.AssignUInt8Const,	stackTopAddress,		stack0Offset,				0);
-			WriteInstruction (buffer,  40, InstructionCode.AssignUInt8Const,	nAddress,				5,							0);
-			WriteInstruction (buffer,  48, InstructionCode.AddUInt8Const,		stackTopAddress,		stack1Offset,				0);
-			WriteInstruction (buffer,  56, InstructionCode.AssignUInt8Const,	(ushort) (stackTopAddress + stack1Offset + 1),	72,	0);
-			WriteInstruction (buffer,  64, InstructionCode.CallMethod,			96,						0,							0);
-			WriteInstruction (buffer,  72, InstructionCode.AssignUInt8Const,	stackTopAddress,		stack0Offset,				0);
-			WriteInstruction (buffer,  80, InstructionCode.AreEqualUInt8,		factorialCycleAddress,	factorialRecursiveAddress,	resultsEqualAddress);
-			WriteInstruction (buffer,  88, InstructionCode.EndOfInstructions,	0,						0,							0);
+			WriteInstruction (buffer, 0,	InstructionCode.Jump,				24,						0,							0);
+			WriteInstruction (buffer, 24,	InstructionCode.InitStack,			stackTopAddress,		0,							0);
+			WriteInstruction (buffer, 32,	InstructionCode.AssignUInt8Const,	stackTopAddress,		stack0Offset,				0);
+			WriteInstruction (buffer, 40,	InstructionCode.AssignUInt8Const,	nAddress,				5,							0);
+			WriteInstruction (buffer, 48,	InstructionCode.AddUInt8Const,		stackTopAddress,		stack1Offset,				0);
+			WriteInstruction (buffer, 56,	InstructionCode.AssignUInt8Const,	(ushort) (stackTopAddress + stack1Offset + 1),	72,	0);
+			WriteInstruction (buffer, 64,	InstructionCode.CallMethod,			96,						0,							0);
+			WriteInstruction (buffer, 72,	InstructionCode.AssignUInt8Const,	stackTopAddress,		stack0Offset,				0);
+			WriteInstruction (buffer, 80,	InstructionCode.AreEqualUInt8,		factorialCycleAddress,	factorialRecursiveAddress,	resultsEqualAddress);
+			WriteInstruction (buffer, 88,	InstructionCode.EndOfInstructions,	0,						0,							0);
 
-			WriteInstruction (buffer, 96, InstructionCode.AssignUInt8Const,		factorialCycleAddress,	1,							0);
-			WriteInstruction (buffer, 104, InstructionCode.AssignUInt8Const,	iAddress,				1,							0);
-			WriteInstruction (buffer, 112, InstructionCode.MultiplyUInt8,		iAddress,				factorialCycleAddress,		factorialCycleAddress);
-			WriteInstruction (buffer, 120, InstructionCode.AddUInt8Const,		iAddress,				1,							iAddress);
-			WriteInstruction (buffer, 128, InstructionCode.LessEqualUInt8,		iAddress,				nAddress,					iLessEqualNAddress);
-			WriteInstruction (buffer, 136, InstructionCode.SkipIfZero,			iLessEqualNAddress,		0,							0);
-			WriteInstruction (buffer, 144, InstructionCode.Jump,				112,					0,							0);
-			WriteInstruction (buffer, 152, InstructionCode.Return,				0,						0,							0);
+			WriteInstruction (buffer, 96,	InstructionCode.AssignUInt8Const,	factorialCycleAddress,	1,							0);
+			WriteInstruction (buffer, 104,	InstructionCode.AssignUInt8Const,	iAddress,				1,							0);
+			WriteInstruction (buffer, 112,	InstructionCode.MultiplyUInt8,		iAddress,				factorialCycleAddress,		factorialCycleAddress);
+			WriteInstruction (buffer, 120,	InstructionCode.AddUInt8Const,		iAddress,				1,							iAddress);
+			WriteInstruction (buffer, 128,	InstructionCode.LessEqualUInt8,		iAddress,				nAddress,					iLessEqualNAddress);
+			WriteInstruction (buffer, 136,	InstructionCode.SkipIfZero,			iLessEqualNAddress,		0,							0);
+			WriteInstruction (buffer, 144,	InstructionCode.Jump,				112,					0,							0);
+			WriteInstruction (buffer, 152,	InstructionCode.Return,				0,						0,							0);
 
 			byte[] result = new byte[160];
 			Buffer.BlockCopy (buffer, 0, result, 0, result.Length);

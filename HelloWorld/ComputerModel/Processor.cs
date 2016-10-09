@@ -4,10 +4,10 @@ namespace HelloWorld.ComputerModel
 {
 	public class Processor
 	{
-		static int stackTopOffset;
+		static int stackTopAddress;
 
 		static public Func<ushort, ushort, ushort, ushort, ushort>[] instructionsList = 
-			new Func<ushort, ushort, ushort, ushort, ushort>[13]; 
+			new Func<ushort, ushort, ushort, ushort, ushort>[14]; 
 
 		static public ushort AssignUInt8Const (ushort instructionOffset, ushort offset, ushort value, ushort unused) {
 			Memory.RAM [offset] = BitConverter.GetBytes (value) [0];
@@ -70,13 +70,19 @@ namespace HelloWorld.ComputerModel
 		}
 
 		static public ushort Return (ushort currentOffset, ushort unused1, ushort unused2, ushort unused3) {
-			ushort currentStackOffset = (ushort) (stackTopOffset + Memory.RAM [stackTopOffset] + 1);
+			ushort currentStackOffset = (ushort) (stackTopAddress + Memory.RAM [stackTopAddress] + 1);
 			return (ushort) Memory.RAM [currentStackOffset];
 		}
 
-		static public ushort InitStack (ushort currentOffset, ushort programStackTopOffset, ushort unused1, ushort unused2){
-			stackTopOffset = programStackTopOffset;
+		static public ushort InitStack (ushort currentOffset, ushort programStackTop, ushort unused1, ushort unused2){
+			stackTopAddress = programStackTop;
 			return (ushort) (currentOffset + 8);
+		}
+
+		static public ushort AssignUInt8ConstStack (ushort instructionOffset, ushort offset, ushort value, ushort unused) {
+			ushort address = Memory.RAM [stackTopAddress] + offset + 1;
+			Memory.RAM [address] = BitConverter.GetBytes (value) [0];
+			return (ushort) (instructionOffset + 8);
 		}
 
 		static public ushort ProcessInstruction (ushort currentInstructionOffset, ref ushort startMethodOffset){
@@ -93,12 +99,13 @@ namespace HelloWorld.ComputerModel
 			/*10*/ instructionsList [(int)InstructionCode.AreEqualUInt8] = AreEqualUInt8;
 			/*11*/ instructionsList [(int)InstructionCode.Return] = Return;
 			/*12*/ instructionsList [(int)InstructionCode.InitStack] = InitStack;
+			/*13*/ instructionsList [(int)InstructionCode.AssignUInt8ConstStack] = AssignUInt8ConstStack;
 
 			ushort currentInstruction = BitConverter.ToUInt16 (Memory.RAM, currentInstructionOffset);
 			ushort arg1 = BitConverter.ToUInt16 (Memory.RAM, (currentInstructionOffset + 2));
 			ushort arg2 = BitConverter.ToUInt16 (Memory.RAM, (currentInstructionOffset + 4));
 			ushort arg3 = BitConverter.ToUInt16 (Memory.RAM, (currentInstructionOffset + 6));
-			if (currentInstruction >= 13) {
+			if (currentInstruction >= 14) {
 				throw new Exception ("Invalid instruction code");
 			};
 
