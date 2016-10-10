@@ -7,7 +7,7 @@ namespace HelloWorld.ComputerModel
 		static int stackTopAddress;
 
 		static public Func<ushort, ushort, ushort, ushort, ushort>[] instructionsList = 
-			new Func<ushort, ushort, ushort, ushort, ushort>[14]; 
+			new Func<ushort, ushort, ushort, ushort, ushort>[15]; 
 
 		static public ushort AssignUInt8Const (ushort instructionOffset, ushort offset, ushort value, ushort unused) {
 			Memory.RAM [offset] = BitConverter.GetBytes (value) [0];
@@ -80,8 +80,13 @@ namespace HelloWorld.ComputerModel
 		}
 
 		static public ushort AssignUInt8ConstStack (ushort instructionOffset, ushort offset, ushort value, ushort unused) {
-			ushort address = Memory.RAM [stackTopAddress] + offset + 1;
+			int address = stackTopAddress + Memory.RAM [stackTopAddress] + offset + 1;
 			Memory.RAM [address] = BitConverter.GetBytes (value) [0];
+			return (ushort) (instructionOffset + 8);
+		}
+
+		static public ushort SubtractUInt8Const (ushort instructionOffset, ushort varOffset, ushort constValue, ushort resultOffset) {
+			Memory.RAM [resultOffset] = (byte) (Memory.RAM [varOffset] - BitConverter.GetBytes (constValue) [0]);
 			return (ushort) (instructionOffset + 8);
 		}
 
@@ -100,12 +105,13 @@ namespace HelloWorld.ComputerModel
 			/*11*/ instructionsList [(int)InstructionCode.Return] = Return;
 			/*12*/ instructionsList [(int)InstructionCode.InitStack] = InitStack;
 			/*13*/ instructionsList [(int)InstructionCode.AssignUInt8ConstStack] = AssignUInt8ConstStack;
+			/*14*/ instructionsList [(int)InstructionCode.SubtractUInt8Const] = SubtractUInt8Const;
 
 			ushort currentInstruction = BitConverter.ToUInt16 (Memory.RAM, currentInstructionOffset);
 			ushort arg1 = BitConverter.ToUInt16 (Memory.RAM, (currentInstructionOffset + 2));
 			ushort arg2 = BitConverter.ToUInt16 (Memory.RAM, (currentInstructionOffset + 4));
 			ushort arg3 = BitConverter.ToUInt16 (Memory.RAM, (currentInstructionOffset + 6));
-			if (currentInstruction >= 14) {
+			if (currentInstruction >= 15) {
 				throw new Exception ("Invalid instruction code");
 			};
 
@@ -122,4 +128,3 @@ namespace HelloWorld.ComputerModel
 		}
 	}
 }
-

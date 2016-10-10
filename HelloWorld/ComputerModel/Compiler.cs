@@ -16,7 +16,8 @@ namespace HelloWorld.ComputerModel
 		AreEqualUInt8,
 		Return,
 		InitStack,
-		AssignUInt8ConstStack
+		AssignUInt8ConstStack,
+		SubtractUInt8Const
 	};
 
 	public class Compiler
@@ -109,10 +110,8 @@ namespace HelloWorld.ComputerModel
 
 		static public byte[] CompileTestFactorial() {
 			ushort stackTopAddress = 8;
-			ushort stack0Offset = 0; //offset relatively to stackTopOffset; offset of return point
-			ushort stack1Offset = 1; //offset relatively to stackTopOffset
 
-			ushort nAddress = 16; //relatively to current stack0offset - local memory start
+			ushort nAddress = 16; 
 			ushort resultsEqualAddress = 17;
 			ushort factorialCycleAddress = 18;
 			ushort factorialRecursiveAddress = 19;
@@ -123,12 +122,12 @@ namespace HelloWorld.ComputerModel
 
 			WriteInstruction (buffer,   0, InstructionCode.Jump, 24, 0, 0);
 			WriteInstruction (buffer,  24, InstructionCode.InitStack, stackTopAddress, 0, 0);
-			WriteInstruction (buffer,  32, InstructionCode.AssignUInt8Const, stackTopAddress, stack0Offset, 0);
+			WriteInstruction (buffer,  32, InstructionCode.AssignUInt8Const, stackTopAddress, 0, 0);
 			WriteInstruction (buffer,  40, InstructionCode.AssignUInt8Const, nAddress, 5, 0);
-			WriteInstruction (buffer,  48, InstructionCode.AddUInt8Const, stackTopAddress, stack1Offset, 0);
-			WriteInstruction (buffer,  56, InstructionCode.AssignUInt8Const, (ushort) (stackTopAddress + stack1Offset + 1), 72, 0);
+			WriteInstruction (buffer,  48, InstructionCode.AddUInt8Const, stackTopAddress, 1, stackTopAddress);
+			WriteInstruction (buffer,  56, InstructionCode.AssignUInt8ConstStack, 0, 72, 0);
 			WriteInstruction (buffer,  64, InstructionCode.CallMethod, 96, 0, 0);
-			WriteInstruction (buffer,  72, InstructionCode.AssignUInt8Const, stackTopAddress, stack0Offset, 0);
+			WriteInstruction (buffer,  72, InstructionCode.SubtractUInt8Const, stackTopAddress, 1, stackTopAddress);
 			WriteInstruction (buffer,  80, InstructionCode.AreEqualUInt8, factorialCycleAddress, factorialRecursiveAddress, resultsEqualAddress);
 			WriteInstruction (buffer,  88, InstructionCode.EndOfInstructions, 0, 0, 0);
 
@@ -148,4 +147,3 @@ namespace HelloWorld.ComputerModel
 		}
 	}
 }
-
