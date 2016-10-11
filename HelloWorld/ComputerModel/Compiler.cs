@@ -3,21 +3,29 @@
 namespace HelloWorld.ComputerModel
 {
 	public enum InstructionCode: ushort {
-		EndOfInstructions, 
-		AssignUInt8Const, 
-		AssignUInt8Var, 
-		MultiplyUInt8, 
-		DivideUInt8, 
-		LessEqualUInt8, 
-		SkipIfZero, 
-		Jump,
-		AddUInt8Const,
-		CallMethod,
-		AreEqualUInt8,
-		Return,
-		InitStack,
-		AssignUInt8ConstStack,
-		SubtractUInt8Const
+		/* 0*/ EndOfInstructions, 
+		/* 1*/ AssignUInt8Const, 
+		/* 2*/ AssignUInt8Var, 
+		/* 3*/ MultiplyUInt8, 
+		/* 4*/ DivideUInt8, 
+		/* 5*/ LessEqualUInt8, 
+		/* 6*/ SkipIfZero, 
+		/* 7*/ Jump,
+		/* 8*/ AddUInt8Const,
+		/* 9*/ CallMethod,
+		/*10*/ AreEqualUInt8,
+		/*11*/ Return,
+		/*12*/ InitStack,
+		/*13*/ AssignUInt8ConstStack,
+		/*14*/ SubtractUInt8Const,
+		/*15*/ AssignUInt8VarStack, 
+		/*16*/ MultiplyUInt8Stack, 
+		/*17*/ DivideUInt8Stack, 
+		/*18*/ LessEqualUInt8Stack, 
+		/*19*/ AddUInt8ConstStack,
+		/*20*/ AreEqualUInt8Stack,
+		/*21*/ SubtractUInt8ConstStack,
+		/*22*/ SkipIfZeroStack
 	};
 
 	public class Compiler
@@ -111,36 +119,41 @@ namespace HelloWorld.ComputerModel
 		static public byte[] CompileTestFactorial() {
 			ushort stackTopAddress = 8;
 
-			ushort nAddress = 16; 
-			ushort resultsEqualAddress = 17;
-			ushort factorialCycleAddress = 18;
-			ushort factorialRecursiveAddress = 19;
-			ushort iAddress = 20;
-			ushort iLessEqualNAddress = 21;
+			ushort nOffset = 1; 
+			ushort resultsEqualOffset = 2;
+			ushort factorialCycleOffset = 3;
+			ushort factorialRecursiveOffset = 4;
 
-			byte[] buffer = new byte[512];
+			ushort factorialCycleNOffset = 1; 
+			ushort factorialCycleResultOffset = 2;
+			ushort factorialCycleIOffset = 3;
+			ushort factorialCycleILessEqualNOffset = 4;
 
-			WriteInstruction (buffer,   0, InstructionCode.Jump, 24, 0, 0);
-			WriteInstruction (buffer,  24, InstructionCode.InitStack, stackTopAddress, 0, 0);
-			WriteInstruction (buffer,  32, InstructionCode.AssignUInt8Const, stackTopAddress, 0, 0);
-			WriteInstruction (buffer,  40, InstructionCode.AssignUInt8Const, nAddress, 5, 0);
-			WriteInstruction (buffer,  48, InstructionCode.AddUInt8Const, stackTopAddress, 1, stackTopAddress);
-			WriteInstruction (buffer,  56, InstructionCode.AssignUInt8ConstStack, 0, 72, 0);
-			WriteInstruction (buffer,  64, InstructionCode.CallMethod, 96, 0, 0);
-			WriteInstruction (buffer,  72, InstructionCode.SubtractUInt8Const, stackTopAddress, 1, stackTopAddress);
-			WriteInstruction (buffer,  80, InstructionCode.AreEqualUInt8, factorialCycleAddress, factorialRecursiveAddress, resultsEqualAddress);
-			WriteInstruction (buffer,  88, InstructionCode.EndOfInstructions, 0, 0, 0);
+			byte[] buffer = new byte[256];
 
-			WriteInstruction (buffer,  96, InstructionCode.AssignUInt8Const, factorialCycleAddress, 1, 0);
-			WriteInstruction (buffer, 104, InstructionCode.AssignUInt8Const, iAddress, 1, 0);
-			WriteInstruction (buffer, 112, InstructionCode.MultiplyUInt8, iAddress, factorialCycleAddress, factorialCycleAddress);
-			WriteInstruction (buffer, 120, InstructionCode.AddUInt8Const, iAddress, 1, iAddress);
-			WriteInstruction (buffer, 128, InstructionCode.LessEqualUInt8, iAddress, nAddress, iLessEqualNAddress);
-			WriteInstruction (buffer, 136, InstructionCode.SkipIfZero, iLessEqualNAddress, 0, 0);
-			WriteInstruction (buffer, 144, InstructionCode.Jump, 112, 0, 0);
-			WriteInstruction (buffer, 152, InstructionCode.Return, 0, 0, 0);
+			WriteInstruction (buffer,   0, InstructionCode.Jump, 64, 0, 0);
+			WriteInstruction (buffer,  64, InstructionCode.InitStack, stackTopAddress, 0, 0);
+			WriteInstruction (buffer,  72, InstructionCode.AssignUInt8Const, stackTopAddress, 0, 0);
+			WriteInstruction (buffer,  80, InstructionCode.AssignUInt8ConstStack, nOffset, 5, 0);
+			WriteInstruction (buffer,  88, InstructionCode.AssignUInt8VarStack, (ushort) (factorialCycleNOffset + 5), nOffset, 0);
+			WriteInstruction (buffer,  96, InstructionCode.AddUInt8Const, stackTopAddress, 5, stackTopAddress);
+			WriteInstruction (buffer, 104, InstructionCode.AssignUInt8ConstStack, 0, 120, 0);
+			WriteInstruction (buffer, 112, InstructionCode.CallMethod, 152, 0, 0);
+			WriteInstruction (buffer, 120, InstructionCode.SubtractUInt8Const, stackTopAddress, 5, stackTopAddress);
+			WriteInstruction (buffer, 128, InstructionCode.AssignUInt8VarStack, factorialCycleOffset, (ushort) (factorialCycleResultOffset + 5), 0);
+			WriteInstruction (buffer, 136, InstructionCode.AreEqualUInt8Stack, factorialCycleOffset, factorialRecursiveOffset, resultsEqualOffset);
+			WriteInstruction (buffer, 144, InstructionCode.EndOfInstructions, 0, 0, 0);
 
-			byte[] result = new byte[160];
+			WriteInstruction (buffer, 152, InstructionCode.AssignUInt8ConstStack, factorialCycleResultOffset, 1, 0);
+			WriteInstruction (buffer, 160, InstructionCode.AssignUInt8ConstStack, factorialCycleIOffset, 1, 0);
+			WriteInstruction (buffer, 168, InstructionCode.MultiplyUInt8Stack, factorialCycleIOffset, factorialCycleResultOffset, factorialCycleResultOffset);
+			WriteInstruction (buffer, 176, InstructionCode.AddUInt8ConstStack, factorialCycleIOffset, 1, factorialCycleIOffset);
+			WriteInstruction (buffer, 184, InstructionCode.LessEqualUInt8Stack, factorialCycleIOffset, factorialCycleNOffset, factorialCycleILessEqualNOffset);
+			WriteInstruction (buffer, 192, InstructionCode.SkipIfZeroStack, factorialCycleILessEqualNOffset, 0, 0);
+			WriteInstruction (buffer, 200, InstructionCode.Jump, 168, 0, 0);
+			WriteInstruction (buffer, 208, InstructionCode.Return, 0, 0, 0);
+
+			byte[] result = new byte[216];
 			Buffer.BlockCopy (buffer, 0, result, 0, result.Length);
 
 			return result;
